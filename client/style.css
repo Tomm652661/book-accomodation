@@ -16,26 +16,27 @@ body {
     padding: 0 20px;
 }
 
-/* Navigační lišta (Header) */
-#topbar {
-    background: #fff;
-    border-bottom: 1px solid #eee;
-    padding: 10px 0;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+/* --- OPRAVENÁ HLAVIČKA S POUŽITÍM FLEXBOX --- */
+#topbar .wrapper {
+    display: flex;
+    justify-content: space-between; /* Rozmístí prvky od sebe */
+    align-items: center; /* Vertikálně je zarovná na střed */
+    flex-wrap: wrap; /* Umožní zalamování na menších obrazovkách */
 }
-#title { float: left; }
 #title h1 {
     font-size: 24px;
-    margin: 0;
-    padding: 5px 0;
+    margin: 10px 0;
     font-weight: 700;
 }
-#menu { float: right; }
+#topbar-right-panel {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Mezera mezi menu a přepínačem jazyků */
+}
 #menu ul {
     list-style: none;
-    margin: 0;
-    padding: 0;
     display: flex;
+    gap: 5px; /* Mezery mezi položkami menu */
 }
 #menu li a {
     text-decoration: none;
@@ -49,12 +50,7 @@ body {
     color: #007bff;
     background-color: #f0f8ff;
 }
-
 /* Jazykový přepínač */
-#language-switcher-container {
-    float: right;
-    margin-left: 20px;
-}
 #language-switcher button {
     background: #f0f0f0;
     border: 1px solid #ccc;
@@ -71,7 +67,7 @@ body {
     border-color: #007bff;
 }
 
-/* Obsah */
+/* Obsah (beze změny) */
 #content-wrapper { margin-top: 20px; }
 .pagediv {
     background: #fff;
@@ -87,123 +83,37 @@ h3 {
     padding-bottom: 10px;
     margin-bottom: 20px;
 }
-
 /* Tabulka s cenami */
-.pricing-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-.pricing-table td {
-    padding: 12px 5px;
-    border-bottom: 1px solid #ddd;
-}
+.pricing-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+.pricing-table td { padding: 12px 5px; border-bottom: 1px solid #ddd; }
 .pricing-table tr:last-child td { border-bottom: none; }
-.pricing-table img {
-    vertical-align: middle;
-    margin-right: 8px;
-    height: 24px;
-}
-
+.pricing-table img { vertical-align: middle; margin-right: 8px; height: 24px; }
 /* Galerie */
-.photo-gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 15px;
-}
-.photo-gallery .frame img {
-    width: 100%;
-    height: 200px;
-    border-radius: 5px;
-    display: block;
-    object-fit: cover;
-    transition: transform 0.3s;
-}
-.photo-gallery .frame img:hover {
-    transform: scale(1.05);
-}
-
+.photo-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
+.photo-gallery .frame img { width: 100%; height: 200px; border-radius: 5px; display: block; object-fit: cover; transition: transform 0.3s; }
+.photo-gallery .frame img:hover { transform: scale(1.05); }
 /* Formulář */
-#booking-form, #payment-options {
-    margin-top: 20px;
-    padding: 20px;
-    background: #f9f9f9;
-    border: 1px solid #e9e9e9;
-    border-radius: 8px;
-}
+#booking-form, #payment-options { margin-top: 20px; padding: 20px; background: #f9f9f9; border: 1px solid #e9e9e9; border-radius: 8px; }
 .form-group { margin-bottom: 15px; }
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-.form-group input, .form-group select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-button[type="submit"] {
-    width: 100%;
-    padding: 12px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
-}
+.form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+.form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+button[type="submit"] { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; transition: background-color 0.3s; }
 button[type="submit"]:hover { background-color: #0056b3; }
-button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-}
-
+button:disabled { background-color: #ccc; cursor: not-allowed; }
 /* Zobrazení ceny a chybové hlášky */
-#price-display {
-    font-size: 1.2em;
-    font-weight: bold;
-    text-align: center;
-    color: #28a745;
-    margin: 15px 0;
-    min-height: 25px;
-}
-#error-message {
-    color: #dc3545;
-    text-align: center;
-    font-weight: bold;
-    margin-top: 10px;
-    min-height: 20px;
-}
-
+#price-display { font-size: 1.2em; font-weight: bold; text-align: center; color: #28a745; margin: 15px 0; min-height: 25px; }
+#error-message { color: #dc3545; text-align: center; font-weight: bold; margin-top: 10px; min-height: 20px; }
 /* Platební informace */
-.payment-info {
-    margin: 15px 0;
-    padding: 15px;
-    border-left: 4px solid #007bff;
-    background: #f0f8ff;
-    border-radius: 4px;
-}
+.payment-info { margin: 15px 0; padding: 15px; border-left: 4px solid #007bff; background: #f0f8ff; border-radius: 4px; }
 .payment-info p { margin: 5px 0; }
 .payment-info img { margin-top: 10px; }
-
 /* Patička */
-#bottombar {
-    margin-top: 40px;
-    background: #333;
-    color: white;
-    padding: 20px 0;
-    text-align: center;
-}
+#bottombar { margin-top: 40px; background: #333; color: white; padding: 20px 0; text-align: center; }
 
 /* Responzivní design */
 @media (max-width: 768px) {
-    #title, #menu, #language-switcher-container {
-        float: none;
-        width: 100%;
-        text-align: center;
+    #topbar .wrapper, #topbar-right-panel {
+        flex-direction: column;
+        gap: 10px;
     }
-    #menu ul { justify-content: center; }
-    #title h1 { padding: 10px 0; }
 }

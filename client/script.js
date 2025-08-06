@@ -1,8 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Globální stav aplikace ---
+    // Globální stav aplikace
     const API_BASE_URL = '/api';
     const contentEl = document.getElementById('content');
-    const pages = ['page_index', 'page_amenities', 'page_gallery', 'page_contact'];
 
     let translations = {};
     let currentLang = 'cs';
@@ -11,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let publicConfig = {};
     let lastCalculatedPrice = null;
 
-    // --- HTML šablony pro jednotlivé stránky ---
+    // HTML šablony pro jednotlivé stránky
     const pageTemplates = {
         page_index: `
             <div id="page_index" class="pagediv">
@@ -38,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="form-group"><label for="currency" data-lang-key="currency_label"></label><select id="currency"><option>CZK</option><option>EUR</option><option>BTC</option></select></div>
                     <div id="price-display"></div>
                     <div id="error-message"></div>
-                    <button type="submit" data-lang-key="submit_button"></button>
+                    <button type="submit" data-lang-key="submit_button" disabled></button>
                 </form>
                 <div id="payment-options" style="display:none;">
                     <h4 data-lang-key="payment_options"></h4>
@@ -58,7 +57,20 @@ document.addEventListener('DOMContentLoaded', () => {
             <div id="page_gallery" class="pagediv">
                 <h3 data-lang-key="gallery_heading"></h3>
                 <div class="photo-gallery">
-                    ${[...Array(14).keys()].map(i => `<div class="frame"><img src="img/${i === 0 ? 'kalen3' : i === 1 ? 'kalen2' : i === 2 ? 'kalen' : `zbr${i+1}`}.jpg" alt="Fotka z galerie ${i+1}"></div>`).join('')}
+                    <div class="frame"><img src="img/kalen3.jpg" alt="Photo"></div>
+                    <div class="frame"><img src="img/kalen2.jpg" alt="Photo"></div>
+                    <div class="frame"><img src="img/kalen.jpg"  alt="Photo"></div>
+                    <div class="frame"><img src="img/zbr4.jpg"   alt="Photo"></div>
+                    <div class="frame"><img src="img/zbr5.jpg"   alt="Photo"></div>
+                    <div class="frame"><img src="img/zbr6.jpg"   alt="Photo"></div>
+                    <div class="frame"><img src="img/zbr7.jpg"   alt="Photo"></div>
+                    <div class="frame"><img src="img/zbr8.jpg"   alt="Photo"></div>
+                    <div class="frame"><img src="img/zbr9.jpg"   alt="Photo"></div>
+                    <div class="frame"><img src="img/zbr10.jpg"  alt="Photo"></div>
+                    <div class="frame"><img src="img/zbr11.jpg"  alt="Photo"></div>
+                    <div class="frame"><img src="img/zbr12.jpg"  alt="Photo"></div>
+                    <div class="frame"><img src="img/zbr13.jpg"  alt="Photo"></div>
+                    <div class="frame"><img src="img/zbr14.jpg"  alt="Photo"></div>
                 </div>
             </div>
         `,
@@ -74,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `
     };
 
-    // --- Funkce pro lokalizaci ---
+    // Lokalizační funkce
     const localizeContent = () => {
         const langPack = translations[currentLang];
         if (!langPack) return;
@@ -85,24 +97,26 @@ document.addEventListener('DOMContentLoaded', () => {
         document.title = langPack.page_title || 'Accommodation';
     };
 
-    // --- Funkce pro renderování stránek ---
+    // Renderovací funkce
     const renderPage = (pageId) => {
         if (!contentEl || !pageTemplates[pageId]) return;
         contentEl.innerHTML = pageTemplates[pageId];
-        localizeContent();
 
         document.querySelectorAll('#menu li').forEach(li => {
-            li.classList.toggle('active', li.classList.contains(pageId.replace('page_', '')));
+            li.classList.remove('active');
+            if (li.classList.contains(pageId.replace('page_', ''))) {
+                li.classList.add('active');
+            }
         });
 
-        if (pageId === 'page_index') {
-            setupBookingForm();
-        }
+        if (pageId === 'page_index') setupBookingForm();
+        localizeContent();
     };
 
-    // --- Nastavení formuláře a jeho logiky ---
+    // Logika rezervačního formuláře
     const setupBookingForm = () => {
         const form = document.getElementById('booking-form');
+        if (!form) return;
         const startDateEl = document.getElementById('start-date');
         const endDateEl = document.getElementById('end-date');
         const currencyEl = document.getElementById('currency');
@@ -139,22 +153,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 const response = await fetch(`${API_BASE_URL}/calculate-price`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ startDate, endDate, currency })
                 });
                 const data = await response.json();
-
                 if (response.ok) {
                     lastCalculatedPrice = data.price;
                     priceEl.innerHTML = `${translations[currentLang].price_display} <strong>${data.price} ${currency}</strong>`;
                     submitBtn.disabled = false;
                 } else {
-                    let errorMessage = data.error;
-                    if (errorMessage.includes('Minimum stay is')) {
-                        errorMessage = translations[currentLang].error_min_stay.replace('{nights}', publicConfig.min_night_count);
-                    }
-                    errorEl.textContent = errorMessage;
+                    let msg = (data.error && data.error.includes(publicConfig.min_night_count))
+                        ? translations[currentLang].error_min_stay.replace('{nights}', publicConfig.min_night_count)
+                        : translations[currentLang].server_error;
+                    errorEl.textContent = msg;
                 }
             } catch (err) {
                 errorEl.textContent = translations[currentLang].server_error;
@@ -166,82 +177,63 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.disabled = true;
             errorEl.textContent = '';
 
-            const bookingData = {
-                startDate: startDateEl.value,
-                endDate: endDateEl.value,
-                email: document.getElementById('email').value,
-                currency: currencyEl.value
-            };
-
             try {
                 const response = await fetch(`${API_BASE_URL}/book`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(bookingData)
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        startDate: startDateEl.value, endDate: endDateEl.value,
+                        email: document.getElementById('email').value, currency: currencyEl.value
+                    })
                 });
                 const data = await response.json();
-
                 if (response.ok) {
                     form.style.display = 'none';
                     const paymentOptions = document.getElementById('payment-options');
                     paymentOptions.style.display = 'block';
-
                     document.querySelector('.account-czk').textContent = publicConfig.account_czk;
                     document.querySelector('.account-eur').textContent = publicConfig.account_eur;
                     document.querySelector('.btc-address').textContent = publicConfig.btc_wallet_address;
-
-                    const priceFromResponse = data.price || lastCalculatedPrice;
-
-                    if(bookingData.currency === 'BTC' && priceFromResponse) {
-                        const btcUri = `bitcoin:${publicConfig.btc_wallet_address}?amount=${priceFromResponse}`;
+                    if(currencyEl.value === 'BTC' && lastCalculatedPrice) {
+                        const btcUri = `bitcoin:${publicConfig.btc_wallet_address}?amount=${lastCalculatedPrice}`;
                         document.getElementById('btc-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(btcUri)}`;
                     }
-
-                    document.getElementById(`payment-${bookingData.currency.toLowerCase()}`).style.display = 'block';
+                    document.getElementById(`payment-${currencyEl.value.toLowerCase()}`).style.display = 'block';
                 } else {
-                    const errorKey = data.error === 'conflict' ? 'error_conflict' : 'server_error';
-                    errorEl.textContent = translations[currentLang][errorKey] || data.error;
-                    submitBtn.disabled = false;
+                    errorEl.textContent = translations[currentLang][data.error === 'conflict' ? 'error_conflict' : 'server_error'];
                 }
             } catch (err) {
                 errorEl.textContent = translations[currentLang].server_error;
-                submitBtn.disabled = false;
             }
+            submitBtn.disabled = false;
         });
 
         [startDateEl, endDateEl, currencyEl].forEach(el => el.addEventListener('change', updatePrice));
     };
 
-    // --- Inicializační funkce ---
+    // Inicializační funkce aplikace
     const initializeApp = async () => {
         try {
-            const [translationsRes, availabilityRes, configRes] = await Promise.all([
+            const [transRes, availRes, confRes] = await Promise.all([
                 fetch(`${API_BASE_URL}/translations`),
                 fetch(`${API_BASE_URL}/availability`),
                 fetch(`${API_BASE_URL}/config`)
             ]);
-
-            translations = await translationsRes.json();
-            const availability = await availabilityRes.json();
+            translations = await transRes.json();
+            const availability = await availRes.json();
             unavailableDates = availability.unavailableDates;
             minOrderDate = availability.minOrderDate;
-            publicConfig = await configRes.json();
-
+            publicConfig = await confRes.json();
         } catch (error) {
             console.error('Chyba při inicializaci aplikace:', error);
             contentEl.innerHTML = `<div class="pagediv"><h3 style="color:red;">Chyba serveru</h3><p>Nepodařilo se načíst potřebná data. Zkuste prosím obnovit stránku později.</p></div>`;
             return;
         }
 
-        // Nastavení navigace a přepínače jazyků
-        document.querySelectorAll('#menu a').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                renderPage('page_' + e.currentTarget.getAttribute('href').substring(1));
-            });
-        });
+        // Vytvoření přepínače jazyků
+        const topbarWrapper = document.querySelector('#topbar .wrapper');
+        const rightPanel = document.createElement('div');
+        rightPanel.id = 'topbar-right-panel';
 
-        const langSwitcherContainer = document.getElementById('language-switcher-container');
         const langSwitcher = document.createElement('div');
         langSwitcher.id = 'language-switcher';
         ['cs', 'en', 'de'].forEach(lang => {
@@ -252,13 +244,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentLang = lang;
                 document.querySelectorAll('#language-switcher button').forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
-                renderPage('page_' + document.querySelector('#menu li.active a').getAttribute('href').substring(1));
+                const currentPageClass = document.querySelector('#menu li.active').classList[0];
+                renderPage('page_' + currentPageClass);
             });
             langSwitcher.appendChild(button);
         });
-        langSwitcherContainer.appendChild(langSwitcher);
 
-        // Zobrazení výchozí stránky
+        const menu = document.getElementById('menu');
+        rightPanel.appendChild(menu);
+        rightPanel.appendChild(langSwitcher);
+        topbarWrapper.appendChild(rightPanel);
+
+        // Navigace v menu
+        document.querySelectorAll('#menu a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                renderPage('page_' + e.currentTarget.getAttribute('href').substring(1));
+            });
+        });
+
         renderPage('page_index');
     };
 
