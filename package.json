@@ -1,7 +1,7 @@
 {
   "name": "accommodation",
   "version": "1.0.0",
-  "description": "Web application for Accommodation in Prague Zbraslav, integrated with Booking.com iCal and manual booking confirmation.",
+  "description": "Web application for Accommodation in Prague Zbraslav.",
   "main": "server/server.js",
   "scripts": {
     "start": "node server/server.js"
@@ -16,6 +16,7 @@
     "ical.js": "^1.4.0",
     "node-cron": "^3.0.2",
     "nodemailer": "^6.9.4",
-    "qrcode": "^1.5.1"
+    "qrcode": "^1.5.1",
+    "node-fetch": "^2.6.1"
   }
 }

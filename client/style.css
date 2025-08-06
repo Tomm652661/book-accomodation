@@ -1,29 +1,237 @@
-/* základní reset */
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family: Arial, sans-serif; background:#f8f8f8; color:#333; }
-.wrapper { max-width:1200px; margin:0 auto; padding:20px; }
-#topbar { background:#fff; border-bottom:1px solid #eee; }
-#title h1 { font-size:24px; padding:15px 0; }
-#menu ul { display:flex; list-style:none; }
-#menu li { margin-right:15px; }
-#menu li.active a, #menu li a:hover { color:#007bff; }
-#menu a { text-decoration:none; padding:15px; display:block; color:#555; }
-.pagediv { background:#fff; margin:20px 0; padding:20px; border-radius:5px; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
-.element.u-title h3 { margin-bottom:15px; line-height:1.4; }
-.element.u-title table { width:100%; border-collapse:collapse; }
-.element.u-title table h4 { font-weight:normal; }
-.element.u-title table td { padding:5px; vertical-align:top; }
-.element.u-2photos { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px; }
-.element.u-2photos .frame img { width:100%; height:auto; border-radius:5px; }
-#footer { background:#333; color:#fff; text-align:center; padding:10px; }
-.booking-div { margin:20px 0; padding:20px; }
-.form-group { margin-bottom:15px; }
-.form-group label { display:block; margin-bottom:5px; font-weight:bold; }
-.form-group input, .form-group select { width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; }
-button { background:#007bff; color:#fff; border:none; padding:10px; border-radius:4px; cursor:pointer; width:100%; font-size:16px; }
-button:hover { background:#0056b3; }
-#error-message { color:#d9534f; margin-top:10px; text-align:center; }
-.payment-info { margin:10px 0; padding:10px; border-left:4px solid #007bff; }
-@media(max-width:768px){
-    #menu ul { flex-direction:column; }
+/* Globální styly */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f8f8f8;
+    color: #333;
+    line-height: 1.6;
+}
+
+.wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Navigační lišta (Header) */
+#topbar {
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+#title {
+    float: left;
+}
+
+#title h1 {
+    font-size: 24px;
+    margin: 0;
+    font-weight: 700;
+}
+
+#menu {
+    float: right;
+}
+
+#menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: flex-end;
+}
+
+#menu li {
+    margin: 0 5px;
+}
+
+#menu li a {
+    text-decoration: none;
+    color: #555;
+    padding: 10px 15px;
+    display: block;
+    transition: color 0.3s, background-color 0.3s;
+}
+
+#menu li.active a,
+#menu li a:hover {
+    color: #007bff;
+    background-color: #f0f8ff;
+}
+
+/* Jazykový přepínač */
+#language-switcher {
+    float: right;
+    padding: 10px 0;
+    margin-left: 20px;
+}
+
+#language-switcher button {
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 4px;
+    margin-left: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+#language-switcher button.active {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+/* Obsah */
+#content-wrapper {
+    margin-top: 20px;
+}
+
+.pagediv {
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+}
+
+h3 {
+    color: #007bff;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+/* Tabulka */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+td, th {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+/* Galerie */
+.element.u-2photos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 10px;
+}
+
+.frame img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    display: block;
+    object-fit: cover;
+}
+
+/* Formulář */
+#booking-modal {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button[type="submit"] {
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+#price-display {
+    font-size: 1.2em;
+    font-weight: bold;
+    text-align: center;
+    color: #28a745;
+}
+
+.error {
+    color: #dc3545;
+    text-align: center;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+/* Platby */
+.payment-info {
+    margin: 10px 0;
+    padding: 15px;
+    border-left: 4px solid #007bff;
+    background: #f0f8ff;
+    border-radius: 4px;
+}
+
+.payment-info img {
+    margin-top: 10px;
+}
+
+/* Patička */
+#bottombar {
+    margin-top: 20px;
+    background: #333;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+}
+
+/* Responzivní design */
+@media (max-width: 768px) {
+    #menu, #language-switcher {
+        float: none;
+        width: 100%;
+    }
+    #menu ul {
+        justify-content: center;
+    }
+    #topbar {
+        text-align: center;
+    }
+    #title h1 {
+        padding: 10px 0;
+    }
+    .element.u-2photos {
+        grid-template-columns: 1fr;
+    }
 }

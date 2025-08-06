@@ -8,5 +8,5 @@
     "12-31": 5000
   },
   "czk_eur_rate": 25.0,
-  "btc_eur_rate": 22000
+  "currency_api_url": "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=eur"
 }
