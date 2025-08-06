@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const API = 'http://localhost:3000/api';
+    const API = '/api'; // OPRAVA: Použití relativní cesty
     const pages = ['page_index', 'page_amenities', 'page_gallery', 'page_contact'];
 
     let translations = {};
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function localizeContent() {
         document.querySelectorAll('[data-lang-key]').forEach(el => {
             const key = el.getAttribute('data-lang-key');
-            if (translations[currentLang][key]) {
+            if (translations[currentLang] && translations[currentLang][key]) {
                 el.textContent = translations[currentLang][key];
             }
         });
@@ -155,8 +155,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderPage(pageId) {
         const content = document.getElementById('content');
-        content.innerHTML = pageContent[pageId];
-        localizeContent();
+        if (content) {
+            content.innerHTML = pageContent[pageId];
+            localizeContent();
+        }
 
         pages.forEach(p => {
             const el = document.querySelector(`#menu .${p.replace('page_', '')}`);
@@ -195,7 +197,10 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             switcher.appendChild(button);
         });
-        document.getElementById('topbar').querySelector('.wrapper').appendChild(switcher);
+        const topbarWrapper = document.getElementById('topbar').querySelector('.wrapper');
+        if (topbarWrapper) {
+            topbarWrapper.appendChild(switcher);
+        }
     }
 
     function attachBookingFormListeners() {
@@ -222,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const configRes = await fetch(`${API}/config`);
                 publicConfig = await configRes.json();
             } catch (e) {
-                if (err) err.textContent = translations[currentLang].server_error;
+                if (err) err.textContent = translations[currentLang].server_error || 'Server error.';
             }
         }
         fetchAvailAndConfig();
@@ -265,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (priceSpan) priceSpan.textContent = '–';
                 }
             } catch (error) {
-                if (err) err.textContent = translations[currentLang].server_error;
+                if (err) err.textContent = translations[currentLang].server_error || 'Server error.';
                 if (priceSpan) priceSpan.textContent = '–';
             }
         }

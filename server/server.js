@@ -19,16 +19,13 @@ app.use(bodyParser.json());
 // Slouží statické soubory z adresáře 'client'
 app.use(express.static(path.join(__dirname,'../client')));
 
-// Update iCal every hour
 cron.schedule('0 * * * *', () => {
     console.log('Running hourly iCal update...');
     fetchAndParseIcal().catch(console.error);
 });
-// Spustí update iCal při startu serveru
 console.log('Starting initial iCal update...');
 fetchAndParseIcal().catch(console.error);
 
-// GET /api/availability
 app.get('/api/availability', (req,res) => {
     const file = path.join(__dirname,'data/booked_dates.json');
     if (!fs.existsSync(file)) {
@@ -41,9 +38,7 @@ app.get('/api/availability', (req,res) => {
     res.json({ unavailableDates: dates, minOrderDate: min.toISOString().split('T')[0] });
 });
 
-// GET /api/config
 app.get('/api/config', (req, res) => {
-    // Poskytuje frontendu veřejné konfigurační údaje
     res.json({
         account_czk: process.env.ACCOUNT_CZK,
         account_eur: process.env.ACCOUNT_EUR,
@@ -51,7 +46,6 @@ app.get('/api/config', (req, res) => {
     });
 });
 
-// GET /api/translations
 app.get('/api/translations', (req, res) => {
     const file = path.join(__dirname, 'data/translations.json');
     if (!fs.existsSync(file)) {
@@ -61,7 +55,6 @@ app.get('/api/translations', (req, res) => {
     res.sendFile(file);
 });
 
-// POST /api/calculate-price
 app.post('/api/calculate-price', async (req,res) => {
     try {
         const { startDate, endDate, currency } = req.body;
@@ -73,7 +66,6 @@ app.post('/api/calculate-price', async (req,res) => {
     }
 });
 
-// POST /api/book
 app.post('/api/book', async (req,res) => {
     try {
         const { startDate,endDate,email,currency } = req.body;
