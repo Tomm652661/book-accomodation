@@ -2,29 +2,26 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title id="page-title">Ubytování Praha Zbraslav, Accommodation Prague Zbraslav</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ubytování Praha Zbraslav</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
 <div id="pager">
     <div id="topbar">
         <div class="wrapper">
             <div id="title">
-                <h1 id="header-title">Ubytování Praha Zbraslav, Accommodation Prague Zbraslav</h1>
+                <h1 id="header-title" data-lang-key="header_title">Ubytování Praha Zbraslav</h1>
             </div>
+            <div id="language-switcher-container"></div>
             <div id="menu">
                 <ul>
-                    <li class="pricelist active"><a href="#pricelist" data-lang-key="menu_pricelist">Ceník</a></li>
-                    <li class="amenities"><a href="#amenities" data-lang-key="menu_amenities">Vybavení</a></li>
-                    <li class="gallery"><a href="#gallery" data-lang-key="menu_gallery">Fotogalerie</a></li>
-                    <li class="contact"><a href="#contact" data-lang-key="menu_contact">Kontakt</a></li>
+                    <li class="index active"><a href="#page_index" data-lang-key="menu_pricelist">Ceník</a></li>
+                    <li class="amenities"><a href="#page_amenities" data-lang-key="menu_amenities">Vybavení</a></li>
+                    <li class="gallery"><a href="#page_gallery" data-lang-key="menu_gallery">Fotogalerie</a></li>
+                    <li class="contact"><a href="#page_contact" data-lang-key="menu_contact">Kontakt</a></li>
                 </ul>
-            </div>
-            <div id="language-switcher">
-                <button data-lang="cs">CZ</button>
-                <button data-lang="en">EN</button>
-                <button data-lang="de">DE</button>
             </div>
             <div style="clear:both"></div>
         </div>
@@ -37,9 +34,14 @@
 </div>
 
 <div id="bottombar">
-    <div id="footer"><div class="wrapper" id="footer-text">2023 © Ubytování Praha Zbraslav</div></div>
+    <div id="footer">
+        <div class="wrapper">
+            <span id="footer-text" data-lang-key="footer_text">© 2025 Ubytování Praha Zbraslav</span>
+        </div>
+    </div>
 </div>
 
 <script src="script.js"></script>
+
 </body>
 </html>

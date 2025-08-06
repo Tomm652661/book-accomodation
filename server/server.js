@@ -1,81 +1,117 @@
-// server/server.js
-const express    = require('express');
-const cors       = require('cors');
-const cron       = require('node-cron');
+const express = require('express');
+const cors = require('cors');
+const cron = require('node-cron');
 const bodyParser = require('body-parser');
-const fs         = require('fs');
-const path       = require('path');
+const fs = require('fs');
+const path = require('path');
 require('dotenv').config();
 
 const { fetchAndParseIcal } = require('./utils/icalParser');
-const { calculatePrice }    = require('./utils/priceCalculator');
-const { sendBookingEmail }  = require('./utils/emailSender');
+const { calculatePrice } = require('./utils/priceCalculator');
+const { sendBookingEmail } = require('./utils/emailSender');
 
-const app  = express();
-const port = 3000;
+const app = express();
+const port = process.env.PORT || 3000;
 
+const bookedDatesPath = path.join(__dirname, 'data/booked_dates.json');
+const translationsPath = path.join(__dirname, 'data/translations.json');
+
+// Middleware
 app.use(cors());
 app.use(bodyParser.json());
-// Slouží statické soubory z adresáře 'client'
-app.use(express.static(path.join(__dirname,'../client')));
+app.use(express.static(path.join(__dirname, '../client')));
 
-cron.schedule('0 * * * *', () => {
-    console.log('Running hourly iCal update...');
-    fetchAndParseIcal().catch(console.error);
+// Inicializace a naplánování synchronizace iCal
+cron.schedule('0 */1 * * *', () => { // Každou hodinu
+    console.log('Spouštím plánovanou aktualizaci iCal feedu...');
+    fetchAndParseIcal().catch(error => console.error('Při plánované aktualizaci iCal došlo k chybě:', error));
 });
-console.log('Starting initial iCal update...');
-fetchAndParseIcal().catch(console.error);
 
-app.get('/api/availability', (req,res) => {
-    const file = path.join(__dirname,'data/booked_dates.json');
-    if (!fs.existsSync(file)) {
-        console.error('Error: booked_dates.json not found');
-        return res.status(500).json({ error:'Availability data not found. Please check server setup.' });
+console.log('Spouštím prvotní aktualizaci iCal feedu při startu serveru...');
+fetchAndParseIcal().catch(error => console.error('Při prvotní aktualizaci iCal došlo k chybě:', error));
+
+// API Endpoints
+app.get('/api/availability', (req, res) => {
+    if (!fs.existsSync(bookedDatesPath)) {
+        console.error(`Chyba: Soubor ${bookedDatesPath} nebyl nalezen. Vytvářím prázdný soubor.`);
+        fs.writeFileSync(bookedDatesPath, '[]');
     }
-    const dates = JSON.parse(fs.readFileSync(file));
-    const min   = new Date();
-    min.setDate(min.getDate() + parseInt(process.env.MIN_DAYS_AHEAD));
-    res.json({ unavailableDates: dates, minOrderDate: min.toISOString().split('T')[0] });
+    const dates = JSON.parse(fs.readFileSync(bookedDatesPath));
+    const minDate = new Date();
+    minDate.setDate(minDate.getDate() + parseInt(process.env.MIN_DAYS_AHEAD || '1'));
+    res.json({
+        unavailableDates: dates,
+        minOrderDate: minDate.toISOString().split('T')[0]
+    });
 });
 
 app.get('/api/config', (req, res) => {
     res.json({
         account_czk: process.env.ACCOUNT_CZK,
         account_eur: process.env.ACCOUNT_EUR,
-        btc_wallet_address: process.env.BTC_WALLET_ADDRESS
+        btc_wallet_address: process.env.BTC_WALLET_ADDRESS,
+        min_night_count: require('./config/config.json').min_night_count
     });
 });
 
 app.get('/api/translations', (req, res) => {
-    const file = path.join(__dirname, 'data/translations.json');
-    if (!fs.existsSync(file)) {
-        console.error('Error: translations.json not found');
-        return res.status(500).json({ error: 'Translations data not found.' });
-    }
-    res.sendFile(file);
+    res.sendFile(translationsPath, (err) => {
+        if (err) {
+            console.error(`Chyba při odesílání souboru s překlady:`, err);
+            res.status(500).json({ error: 'Translations data not found.' });
+        }
+    });
 });
 
-app.post('/api/calculate-price', async (req,res) => {
+app.post('/api/calculate-price', async (req, res) => {
     try {
         const { startDate, endDate, currency } = req.body;
-        const price = await calculatePrice(startDate,endDate,currency);
+        const price = await calculatePrice(startDate, endDate, currency);
         res.json({ price });
-    } catch(e) {
-        console.error('Price calculation error:', e.message);
+    } catch (e) {
+        console.error('Chyba při kalkulaci ceny:', e.message);
         res.status(400).json({ error: e.message });
     }
 });
 
-app.post('/api/book', async (req,res) => {
+app.post('/api/book', async (req, res) => {
     try {
-        const { startDate,endDate,email,currency } = req.body;
-        const price = await calculatePrice(startDate,endDate,currency);
-        await sendBookingEmail({ startDate,endDate,email,price,currency });
-        res.json({ message:'Booking received. Confirmation after payment.' });
-    } catch(e) {
-        console.error('Booking error:', e);
-        res.status(500).json({ error:'Server error' });
+        const { startDate, endDate, email, currency } = req.body;
+
+        // --- KRITICKÁ SEKCE: PREVENCE DVOJITÉ REZERVACE ---
+        // 1. Načtení aktuálně obsazených termínů přímo ze souboru
+        const currentlyBooked = JSON.parse(fs.readFileSync(bookedDatesPath, 'utf-8'));
+        const newBookingDates = [];
+        for (let d = new Date(startDate); d < new Date(endDate); d.setDate(d.getDate() + 1)) {
+            const dateString = d.toISOString().split('T')[0];
+            if (currentlyBooked.includes(dateString)) {
+                // 2. Pokud je termín již obsazen, okamžitě vrátit chybu
+                console.warn(`Pokus o rezervaci již obsazeného termínu: ${dateString}`);
+                return res.status(409).json({ error: 'conflict' });
+            }
+            newBookingDates.push(dateString);
+        }
+
+        // 3. Termín je volný, pokračujeme v rezervaci
+        const price = await calculatePrice(startDate, endDate, currency);
+        await sendBookingEmail({ startDate, endDate, email, price, currency });
+
+        // 4. Přidání nově rezervovaných dat do souboru a uložení
+        const updatedBookedDates = [...new Set([...currentlyBooked, ...newBookingDates])].sort();
+        fs.writeFileSync(bookedDatesPath, JSON.stringify(updatedBookedDates, null, 2));
+        console.log(`Nová rezervace úspěšně uložena pro termín ${startDate} - ${endDate}.`);
+        // --- KONEC KRITICKÉ SEKCE ---
+
+        res.status(200).json({ message: 'booking_confirmation_message', price: price });
+
+    } catch (e) {
+        console.error('Došlo k chybě při zpracování rezervace:', e);
+        if (e.message.includes('Minimální délka pobytu')) {
+            return res.status(400).json({ error: e.message });
+        }
+        res.status(500).json({ error: 'server_error' });
     }
 });
 
-app.listen(port, () => console.log(`Server running on http://localhost:${port}`));
+
+app.listen(port, () => console.log(`Server běží na http://localhost:${port}`));
