@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const pageTemplates = {
         page_index: `
             <div id="page_index" class="pagediv">
+                <h3 data-lang-key="menu_pricelist"></h3>
                 <p data-lang-key="pricelist_intro"></p>
                 <table class="pricing-table">
                     <tr><td><strong data-lang-key="min_nights"></strong></td><td><strong data-lang-key="max_persons"></strong></td></tr>
@@ -57,36 +58,26 @@ document.addEventListener('DOMContentLoaded', () => {
             <div id="page_gallery" class="pagediv">
                 <h3 data-lang-key="gallery_heading"></h3>
                 <div class="photo-gallery">
-                    <div class="frame"><img src="img/kalen3.jpg" alt="Photo"></div>
-                    <div class="frame"><img src="img/kalen2.jpg" alt="Photo"></div>
-                    <div class="frame"><img src="img/kalen.jpg"  alt="Photo"></div>
-                    <div class="frame"><img src="img/zbr4.jpg"   alt="Photo"></div>
-                    <div class="frame"><img src="img/zbr5.jpg"   alt="Photo"></div>
-                    <div class="frame"><img src="img/zbr6.jpg"   alt="Photo"></div>
-                    <div class="frame"><img src="img/zbr7.jpg"   alt="Photo"></div>
-                    <div class="frame"><img src="img/zbr8.jpg"   alt="Photo"></div>
-                    <div class="frame"><img src="img/zbr9.jpg"   alt="Photo"></div>
-                    <div class="frame"><img src="img/zbr10.jpg"  alt="Photo"></div>
-                    <div class="frame"><img src="img/zbr11.jpg"  alt="Photo"></div>
-                    <div class="frame"><img src="img/zbr12.jpg"  alt="Photo"></div>
-                    <div class="frame"><img src="img/zbr13.jpg"  alt="Photo"></div>
-                    <div class="frame"><img src="img/zbr14.jpg"  alt="Photo"></div>
+                    <div class="frame"><img src="img/kalen3.jpg" alt="Photo"></div><div class="frame"><img src="img/kalen2.jpg" alt="Photo"></div>
+                    <div class="frame"><img src="img/kalen.jpg" alt="Photo"></div><div class="frame"><img src="img/zbr4.jpg" alt="Photo"></div>
+                    <div class="frame"><img src="img/zbr5.jpg" alt="Photo"></div><div class="frame"><img src="img/zbr6.jpg" alt="Photo"></div>
+                    <div class="frame"><img src="img/zbr7.jpg" alt="Photo"></div><div class="frame"><img src="img/zbr8.jpg" alt="Photo"></div>
+                    <div class="frame"><img src="img/zbr9.jpg" alt="Photo"></div><div class="frame"><img src="img/zbr10.jpg" alt="Photo"></div>
+                    <div class="frame"><img src="img/zbr11.jpg" alt="Photo"></div><div class="frame"><img src="img/zbr12.jpg" alt="Photo"></div>
+                    <div class="frame"><img src="img/zbr13.jpg" alt="Photo"></div><div class="frame"><img src="img/zbr14.jpg" alt="Photo"></div>
                 </div>
             </div>
         `,
         page_contact: `
-            <div id="page_contact" class="pagediv">
-                <h3 data-lang-key="contact_heading"></h3>
+            <div id="page_contact" class="pagediv"><h3 data-lang-key="contact_heading"></h3>
                 <p><a href="https://www.google.com/maps/search/?api=1&query=Kubínova%2C+Praha+5+Zbraslav" target="_blank" rel="noopener" data-lang-key="view_map"></a></p>
                 <p><img src="img/tlf.png" alt="Telefon"> +420 123 456 789</p>
-                <p data-lang-key="address_value"></p>
-                <p data-lang-key="company_id"></p>
+                <p data-lang-key="address_value"></p><p data-lang-key="company_id"></p>
                 <a href="http://navrcholu.cz/" target="_blank"><script src="https://c1.navrcholu.cz/code?site=139642;t=lb14" async defer></script></a>
             </div>
         `
     };
 
-    // Lokalizační funkce
     const localizeContent = () => {
         const langPack = translations[currentLang];
         if (!langPack) return;
@@ -97,7 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.title = langPack.page_title || 'Accommodation';
     };
 
-    // Renderovací funkce
     const renderPage = (pageId) => {
         if (!contentEl || !pageTemplates[pageId]) return;
         contentEl.innerHTML = pageTemplates[pageId];
@@ -113,7 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
         localizeContent();
     };
 
-    // Logika rezervačního formuláře
     const setupBookingForm = () => {
         const form = document.getElementById('booking-form');
         if (!form) return;
@@ -176,7 +165,6 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             submitBtn.disabled = true;
             errorEl.textContent = '';
-
             try {
                 const response = await fetch(`${API_BASE_URL}/book`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -210,13 +198,10 @@ document.addEventListener('DOMContentLoaded', () => {
         [startDateEl, endDateEl, currencyEl].forEach(el => el.addEventListener('change', updatePrice));
     };
 
-    // Inicializační funkce aplikace
     const initializeApp = async () => {
         try {
             const [transRes, availRes, confRes] = await Promise.all([
-                fetch(`${API_BASE_URL}/translations`),
-                fetch(`${API_BASE_URL}/availability`),
-                fetch(`${API_BASE_URL}/config`)
+                fetch(`${API_BASE_URL}/translations`), fetch(`${API_BASE_URL}/availability`), fetch(`${API_BASE_URL}/config`)
             ]);
             translations = await transRes.json();
             const availability = await availRes.json();
@@ -225,43 +210,42 @@ document.addEventListener('DOMContentLoaded', () => {
             publicConfig = await confRes.json();
         } catch (error) {
             console.error('Chyba při inicializaci aplikace:', error);
-            contentEl.innerHTML = `<div class="pagediv"><h3 style="color:red;">Chyba serveru</h3><p>Nepodařilo se načíst potřebná data. Zkuste prosím obnovit stránku později.</p></div>`;
+            contentEl.innerHTML = `<div class="pagediv"><h3 style="color:red;">Chyba serveru</h3><p>Nepodařilo se načíst potřebná data.</p></div>`;
             return;
         }
 
-        // Vytvoření přepínače jazyků
-        const topbarWrapper = document.querySelector('#topbar .wrapper');
-        const rightPanel = document.createElement('div');
-        rightPanel.id = 'topbar-right-panel';
-
-        const langSwitcher = document.createElement('div');
-        langSwitcher.id = 'language-switcher';
-        ['cs', 'en', 'de'].forEach(lang => {
-            const button = document.createElement('button');
-            button.textContent = lang.toUpperCase();
-            button.classList.toggle('active', lang === currentLang);
-            button.addEventListener('click', () => {
-                currentLang = lang;
-                document.querySelectorAll('#language-switcher button').forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                const currentPageClass = document.querySelector('#menu li.active').classList[0];
-                renderPage('page_' + currentPageClass);
+        // Inicializace jazykového přepínače
+        const languageSwitcher = document.getElementById('language-switcher');
+        if (languageSwitcher) {
+            languageSwitcher.addEventListener('click', (e) => {
+                if (e.target.tagName === 'BUTTON') {
+                    const newLang = e.target.getAttribute('data-lang');
+                    if (newLang && translations[newLang]) {
+                        currentLang = newLang;
+                        document.querySelectorAll('#language-switcher button').forEach(btn => btn.classList.remove('active'));
+                        e.target.classList.add('active');
+                        const currentPageClass = document.querySelector('#menu li.active').classList[0];
+                        renderPage('page_' + currentPageClass);
+                    }
+                }
             });
-            langSwitcher.appendChild(button);
-        });
+        }
 
+        // Opravená navigace pomocí Event Delegation
         const menu = document.getElementById('menu');
-        rightPanel.appendChild(menu);
-        rightPanel.appendChild(langSwitcher);
-        topbarWrapper.appendChild(rightPanel);
-
-        // Navigace v menu
-        document.querySelectorAll('#menu a').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                renderPage('page_' + e.currentTarget.getAttribute('href').substring(1));
+        if (menu) {
+            menu.addEventListener('click', (e) => {
+                const link = e.target.closest('a');
+                if (link) {
+                    e.preventDefault();
+                    const href = link.getAttribute('href');
+                    if (href && href.startsWith('#page_')) {
+                        const pageId = href.substring(1);
+                        renderPage(pageId);
+                    }
+                }
             });
-        });
+        }
 
         renderPage('page_index');
     };

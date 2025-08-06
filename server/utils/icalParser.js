@@ -41,9 +41,6 @@ async function fetchAndParseIcal() {
                         endDate.setDate(endDate.getDate() + config.pause_days_after);
 
                         for (let d = new Date(startDate); d < endDate; d.setDate(d.getDate() + 1)) {
-                            // --- OPRAVA ZDE ---
-                            // Ruční formátování data na YYYY-MM-DD, aby se předešlo chybám s časovou zónou.
-                            // Nahrazuje původní d.toISOString().split('T')[0], které způsobovalo posun.
                             const year = d.getFullYear();
                             const month = String(d.getMonth() + 1).padStart(2, '0');
                             const day = String(d.getDate()).padStart(2, '0');
