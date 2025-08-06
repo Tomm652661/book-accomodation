@@ -1,0 +1,12 @@
+{
+  "pause_days_before": -1,
+  "pause_days_after": 1,
+  "min_day_price": 1900,
+  "min_night_count": 6,
+  "special_day_prices": {
+    "12-24": 5000,
+    "12-31": 5000
+  },
+  "czk_eur_rate": 25.0,
+  "btc_eur_rate": 22000
+}
