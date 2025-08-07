@@ -65,7 +65,7 @@ button:disabled { background-color: #555; cursor: not-allowed; }
 #bottombar { text-align: center; padding: 40px 20px; color: var(--secondary-text); font-size: 0.9em; background: transparent; }
 @media (max-width: 768px) { #topbar .wrapper, #topbar-right-panel { flex-direction: column; gap: 15px; } .pagediv { padding: 20px; } h3 { font-size: 1.5em; } }
 
-/* --- PŘIDANÉ STYLY ZDE: Vzhled pro nový kalendář (Flatpickr) --- */
+/* --- Styly pro nový kalendář (Flatpickr) --- */
 .flatpickr-calendar {
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
