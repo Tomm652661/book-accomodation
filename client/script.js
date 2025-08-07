@@ -35,6 +35,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     <tr>
                         <td colspan="2" style="padding-top: 20px;"><a href="https://www.booking.com/hotel/cz/prague-zbraslav-apartment.cs.html" target="_blank" rel="noopener"><img src="img/booking.png" alt="Booking.com" style="height: 32px;"></a></td>
                     </tr>
+                    <tr>
+                        <td colspan="2">${contactHTML}</td>
+                    </tr>
                 </table>
             </div>
             <div id="booking-container" class="pagediv">
@@ -63,10 +66,8 @@ document.addEventListener('DOMContentLoaded', () => {
         `,
         page_amenities: `<div id="page_amenities" class="pagediv"><h3 data-lang-key="amenities_heading"></h3><p data-lang-key="amenities_list"></p></div>`,
         page_gallery: `<div id="page_gallery" class="pagediv"><h3 data-lang-key="gallery_heading"></h3><div class="photo-gallery">${[...Array(14).keys()].map(i => `<div class="frame"><img src="img/${i < 3 ? 'kalen' + (3 - i) : 'zbr' + (i + 1)}.jpg" alt="Photo"></div>`).join('')}</div></div>`,
-        page_contact: `<div id="page_contact" class="pagediv"><h3 data-lang-key="contact_heading"></h3>${contactHTML}<hr style="border-color: var(--glass-border); margin: 20px 0;"><p data-lang-key="address_value"></p><p><a href="https://www.google.com/maps/search/?api=1&query=Kubínova,Praha+5+Zbraslav" target="_blank" rel="noopener" data-lang-key="view_map"></a></p><p data-lang-key="company_id"></p><a href="http://navrcholu.cz/" target="_blank"><script src="https://c1.navrcholu.cz/code?site=139642;t=lb14" async defer></script></a></div>`
+        page_contact: `<div id="page_contact" class="pagediv"><h3 data-lang-key="contact_heading"></h3>${contactHTML}<hr style="border-color: var(--glass-border); margin: 20px 0;"><p data-lang-key="address_value"></p><p><a href="http://googleusercontent.com/maps.google.com/8" target="_blank" rel="noopener" data-lang-key="view_map"></a></p><p data-lang-key="company_id"></p><a href="http://navrcholu.cz/" target="_blank"><script src="https://c1.navrcholu.cz/code?site=139642;t=lb14" async defer></script></a></div>`
     };
-
-    // --- POMOCNÉ FUNKCE ---
 
     const populateContactInfo = () => {
         const phoneEl = document.getElementById('kontakt-telefon');
@@ -78,14 +79,14 @@ document.addEventListener('DOMContentLoaded', () => {
             phoneEl.href = "tel:" + phone.replace(/\s/g, '');
             phoneEl.textContent = phone;
         } else if (phoneEl) {
-            phoneEl.parentElement.style.display = 'none';
+            phoneEl.parentElement.parentElement.style.display = 'none';
         }
 
         if (emailEl && email) {
             emailEl.href = "mailto:" + email;
             emailEl.textContent = email;
         } else if (emailEl) {
-            emailEl.parentElement.style.display = 'none';
+            emailEl.parentElement.parentElement.style.display = 'none';
         }
     };
 
@@ -99,6 +100,25 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         document.title = langPack.page_title || 'Accommodation';
+    };
+
+    const renderPage = (pageId) => {
+        if (!contentEl || !pageTemplates[pageId]) return;
+        contentEl.innerHTML = pageTemplates[pageId];
+
+        document.querySelectorAll('#menu li').forEach(li => {
+            li.classList.remove('active');
+            if (li.classList.contains(pageId.replace('page_', ''))) {
+                li.classList.add('active');
+            }
+        });
+
+        if (pageId === 'page_index') {
+            setupBookingForm();
+        }
+
+        populateContactInfo();
+        localizeContent();
     };
 
     const setupBookingForm = () => {
@@ -195,50 +215,25 @@ document.addEventListener('DOMContentLoaded', () => {
         [startDateEl, endDateEl, currencyEl].forEach(el => el.addEventListener('change', updatePrice));
     };
 
-    const renderPage = (pageId) => {
-        if (!contentEl || !pageTemplates[pageId]) return;
-        contentEl.innerHTML = pageTemplates[pageId];
-
-        document.querySelectorAll('#menu li').forEach(li => {
-            li.classList.remove('active');
-            if (li.classList.contains(pageId.replace('page_', ''))) {
-                li.classList.add('active');
-            }
-        });
-
-        if (pageId === 'page_index') {
-            setupBookingForm();
-        }
-
-        populateContactInfo();
-        localizeContent();
-    };
-
-    // --- HLAVNÍ FUNKCE APLIKACE ---
-
     const initializeApp = async () => {
         try {
-            // Načtení všech potřebných dat ze serveru najednou
             const [transRes, availRes, confRes] = await Promise.all([
                 fetch(`${API_BASE_URL}/translations`),
                 fetch(`${API_BASE_URL}/availability`),
                 fetch(`${API_BASE_URL}/config`)
             ]);
 
-            // Zpracování a uložení dat do proměnných
             translations = await transRes.json();
             const availability = await availRes.json();
             unavailableDates = availability.unavailableDates;
             minOrderDate = availability.minOrderDate;
             publicConfig = await confRes.json();
-
         } catch (error) {
             console.error('Chyba při inicializaci aplikace:', error);
             contentEl.innerHTML = `<div class="pagediv"><h3 style="color:red;">Chyba serveru</h3><p>Nepodařilo se načíst potřebná data.</p></div>`;
             return;
         }
 
-        // Dynamické vytvoření pravého panelu v hlavičce
         const topbarWrapper = document.querySelector('#topbar .wrapper');
         const rightPanel = document.createElement('div');
         rightPanel.id = 'topbar-right-panel';
@@ -264,7 +259,6 @@ document.addEventListener('DOMContentLoaded', () => {
         rightPanel.appendChild(langSwitcher);
         topbarWrapper.appendChild(rightPanel);
 
-        // Nastavení navigace v menu
         menu.addEventListener('click', (e) => {
             const link = e.target.closest('a');
             if (link) {
@@ -274,10 +268,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Vykreslení výchozí stránky
         renderPage('page_index');
     };
 
-    // Spuštění aplikace
     initializeApp();
 });

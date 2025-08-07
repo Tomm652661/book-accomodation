@@ -42,6 +42,7 @@ app.get('/api/availability', (req, res) => {
             minOrderDate: minDate.toISOString().split('T')[0]
         });
     } catch (error) {
+        console.error('Chyba v /api/availability:', error);
         res.status(500).json({ error: 'Server error while getting availability.' });
     }
 });
@@ -53,7 +54,7 @@ app.get('/api/config', (req, res) => {
             account_czk: process.env.ACCOUNT_CZK,
             account_eur: process.env.ACCOUNT_EUR,
             btc_wallet_address: process.env.BTC_WALLET_ADDRESS,
-            min_night_count: config.min_night_count, // Opraveno: Čárka byla přidána.
+            min_night_count: config.min_night_count,
             contact_email: process.env.CONTACT_EMAIL,
             contact_phone: process.env.CONTACT_PHONE
         });
@@ -109,4 +110,4 @@ app.post('/api/book', async (req, res) => {
     }
 });
 
-app.listen(port, () => console.log(`Server běží na portu ${port}`));
+app.listen(port, () => console.log(`Server běží na http://localhost:${port}`));

@@ -25,7 +25,7 @@ body {
     line-height: 1.7;
 
     /* ZDE VLOŽTE OBRÁZEK NA POZADÍ */
-    background-image: url('img/kalen3.jpg'); /* Příklad: background-image: url('img/moje-pozadi.jpg'); */
+    background-image: url('img/pozadi.jpg');
     background-size: cover;
     background-position: center center;
     background-attachment: fixed;
@@ -124,14 +124,16 @@ body {
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
-h3 {
-    font-size: 2em;
+h3, h4 {
     font-weight: 300;
     color: var(--primary-text);
     border-bottom: 1px solid var(--accent-color);
     padding-bottom: 15px;
     margin-bottom: 25px;
 }
+h3 { font-size: 2em; }
+h4 { font-size: 1.5em; }
+
 
 p, td, li {
     color: var(--secondary-text);
@@ -152,7 +154,7 @@ a:hover {
     border-color: var(--glass-border);
     padding: 15px 5px;
 }
-.pricing-table img { height: 20px; filter: invert(80%); }
+.pricing-table img { height: 20px; filter: invert(80%); vertical-align: middle; }
 
 .form-group input, .form-group select {
     width: 100%;
