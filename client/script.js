@@ -109,20 +109,39 @@ document.addEventListener('DOMContentLoaded', () => {
         const errorEl = document.getElementById('error-message');
         const submitBtn = form.querySelector('button[type="submit"]');
 
-        // --- ZMĚNA ZDE: Přidán parametr 'locale' do nastavení kalendáře ---
-        const endDatePicker = flatpickr(endDateEl, {
+        // --- ZMĚNA LOGIKY ZDE: Propojení obou kalendářů ---
+        let endDatePicker; // Deklarujeme proměnnou zde, aby byla přístupná níže
+
+        const startDatePicker = flatpickr(startDateEl, {
             minDate: minOrderDate,
             disable: unavailableDates,
             dateFormat: "Y-m-d",
-            locale: currentLang // Nastaví jazyk kalendáře (cs, en, de)
+            locale: currentLang,
+            onClose: function(selectedDates) {
+                // Tato funkce se spustí po výběru data příjezdu
+                if (selectedDates[0]) {
+                    const nextDay = new Date(selectedDates[0]);
+                    nextDay.setDate(nextDay.getDate() + 1);
+
+                    // 1. Nastaví minimální datum pro odjezd (ochrana proti chybě)
+                    endDatePicker.set('minDate', nextDay);
+
+                    // 2. Předvybere v kalendáři pro odjezd následující den
+                    endDatePicker.setDate(nextDay, true); // 'true' spustí 'onChange' pro přepočet ceny
+
+                    // 3. Automaticky otevře kalendář pro výběr data odjezdu
+                    endDatePicker.open();
+                }
+            }
         });
 
-        flatpickr(startDateEl, {
+        endDatePicker = flatpickr(endDateEl, {
             minDate: minOrderDate,
             disable: unavailableDates,
             dateFormat: "Y-m-d",
-            locale: currentLang, // Nastaví jazyk kalendáře (cs, en, de)
+            locale: currentLang
         });
+        // --- KONEC ZMĚN ---
 
         const isDateAvailable = (start, end) => {
             for (let d = new Date(start); d < new Date(end); d.setDate(d.getDate() + 1)) {
