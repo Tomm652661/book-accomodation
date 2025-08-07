@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <tr><td data-lang-key="address_label"></td><td data-lang-key="address_value"></td></tr>
                     <tr><td data-lang-key="wifi_free"></td><td data-lang-key="parking_free"></td></tr>
                     <tr>
-                        <td><a href="https://www.booking.com/hotel/cz/prague-zbraslav-apartment.cs.html" target="_blank" rel="noopener"><img src="img/booking.png" alt="Booking.com"></a></td>
+                        <td><a href="https://www.booking.com/hotel/cz/cely-dum-s-vybavenou-kuchyni-koupelna-s-virivkou.cs.html" target="_blank" rel="noopener"><img src="img/booking.png" alt="Booking.com"></a></td>
                         <td><img src="img/tlf.png" alt="Telefon"> +420 123 456 789</td>
                     </tr>
                 </table>
