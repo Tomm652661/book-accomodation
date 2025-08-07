@@ -2,12 +2,12 @@ const nodemailer = require('nodemailer');
 const QRCode = require('qrcode');
 require('dotenv').config();
 
-async function sendBookingEmail({ startDate, endDate, email, price, currency }) {
-    // OPRAVA: Původně zde bylo chybné 'createTransporter'
+// --- ZMĚNA ZDE: Funkce nyní přijímá i 'phone' ---
+async function sendBookingEmail({ startDate, endDate, email, price, currency, phone }) {
     const transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
         port: +process.env.SMTP_PORT,
-        secure: process.env.SMTP_PORT === '465', // true pro port 465
+        secure: process.env.SMTP_PORT === '465',
         auth: {
             user: process.env.SMTP_USER,
             pass: process.env.SMTP_PASS
@@ -46,7 +46,9 @@ async function sendBookingEmail({ startDate, endDate, email, price, currency }) 
                 ${paymentDetailsHtml}
                 <br>
                 <p>S pozdravem,</p>
-                <p>Ubytování Praha Zbraslav</p>
+                <p>TERA Broadcasting system s.r.o.</p>
+                
+                ${phone ? `<p><strong>Telefon:</strong> ${phone}</p>` : ''}
             </div>`
     };
 

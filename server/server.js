@@ -89,7 +89,6 @@ app.post('/api/book', async (req, res) => {
     try {
         const { startDate, endDate, email, currency } = req.body;
 
-        // Krok 1: Zkontrolovat, zda termín není již obsazený (tato funkce zůstává)
         const currentlyBooked = JSON.parse(fs.readFileSync(bookedDatesPath, 'utf-8'));
         for (let d = new Date(startDate); d < new Date(endDate); d.setDate(d.getDate() + 1)) {
             const dateString = formatDateToYYYYMMDD(d);
@@ -98,24 +97,23 @@ app.post('/api/book', async (req, res) => {
             }
         }
 
-        // Krok 2: Vypočítat cenu
         const price = await calculatePrice(startDate, endDate, currency);
 
-        // Krok 3: Odeslat e-mail s poptávkou (tato funkce zůstává)
         try {
-            await sendBookingEmail({ startDate, endDate, email, price, currency });
+            // --- ZMĚNA ZDE: Přidán parametr 'phone' ---
+            await sendBookingEmail({
+                startDate,
+                endDate,
+                email,
+                price,
+                currency,
+                phone: process.env.CONTACT_PHONE
+            });
         } catch (emailError) {
             console.error("KRITICKÁ CHYBA: Odeslání e-mailu selhalo!", emailError);
             return res.status(500).json({ error: 'email_send_failed' });
         }
 
-        // --- ZMĚNA ZDE ---
-        // Původní kód, který automaticky zapisoval data do booked_dates.json,
-        // byl kompletně odstraněn.
-        // Nyní se rezervace pouze odešle e-mailem a čeká na vaše manuální potvrzení.
-        // -----------------
-
-        // Krok 4: Odeslat úspěšnou odpověď uživateli
         res.status(200).json({ message: 'booking_confirmation_message', price: price });
 
     } catch (e) {
@@ -124,7 +122,6 @@ app.post('/api/book', async (req, res) => {
     }
 });
 
-// Pomocná funkce pro formátování data
 const formatDateToYYYYMMDD = (date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
