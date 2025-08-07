@@ -1,8 +1,8 @@
-// TATO VERZE JE KOMPLETNĚ PŘEPSÁNA PRO MAXIMÁLNÍ SPOLEHLIVOST A JEDNODUCHOST
 document.addEventListener('DOMContentLoaded', () => {
-    // Globální proměnné
+    // Globální stav aplikace
     const API_BASE_URL = '/api';
     const contentEl = document.getElementById('content');
+
     let translations = {};
     let currentLang = 'cs';
     let unavailableDates = [];
@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let publicConfig = {};
     let lastCalculatedPrice = null;
 
-    // Šablona pro kontaktní údaje
     const contactHTML = `
         <div class="contact-info-block">
             <p><strong>Telefon:</strong> <a id="kontakt-telefon" href="#"></a></p>
@@ -18,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
     `;
 
-    // Šablony pro obsah jednotlivých stránek
     const pageTemplates = {
         page_index: `
             <div id="page_index" class="pagediv">
@@ -32,8 +30,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     <tr><td></td><td data-lang-key="price_btc_value"></td></tr>
                     <tr><td data-lang-key="address_label"></td><td data-lang-key="address_value"></td></tr>
                     <tr><td data-lang-key="wifi_free"></td><td data-lang-key="parking_free"></td></tr>
-                    <tr><td colspan="2" style="padding-top: 20px;"><a href="https://www.booking.com/hotel/cz/prague-zbraslav-apartment.cs.html" target="_blank" rel="noopener"><img src="img/booking.png" alt="Booking.com" style="height: 32px;"></a></td></tr>
-                    <tr><td colspan="2">${contactHTML}</td></tr>
+                    <tr>
+                        <td colspan="2" style="padding-top: 20px;"><a href="https://www.booking.com/hotel/cz/prague-zbraslav-apartment.cs.html" target="_blank" rel="noopener"><img src="img/booking.png" alt="Booking.com" style="height: 32px;"></a></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">${contactHTML}</td>
+                    </tr>
                 </table>
             </div>
             <div id="booking-container" class="pagediv">
@@ -48,16 +50,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     <button type="submit" data-lang-key="submit_button" disabled></button>
                 </form>
                 <div id="payment-options" style="display:none;">
-                    <h4 data-lang-key="payment_options"></h4><p data-lang-key="booking_confirmation_message"></p>
+                    <h4 data-lang-key="payment_options"></h4>
+                    <p data-lang-key="booking_confirmation_message"></p>
                     <div id="payment-czk" class="payment-info" style="display:none;"><p><span data-lang-key="account_czk_label"></span> <b class="account-czk"></b></p></div>
                     <div id="payment-eur" class="payment-info" style="display:none;"><p><span data-lang-key="account_eur_label"></span> <b class="account-eur"></b></p></div>
-                    <div id="payment-btc" class="payment-info" style="display:none;"><p><span data-lang-key="btc_address_label"></span> <b class="btc-address"></b></p><img id="btc-qr" alt="BTC QR Code"></div>
+                    <div id="payment-btc" class="payment-info" style="display:none;">
+                        <p><span data-lang-key="btc_address_label"></span> <b class="btc-address"></b></p>
+                        <img id="btc-qr" alt="BTC QR Code">
+                    </div>
                     <p data-lang-key="payment_info"></p>
                 </div>
-            </div>`,
+            </div>
+        `,
         page_amenities: `<div id="page_amenities" class="pagediv"><h3 data-lang-key="amenities_heading"></h3><p data-lang-key="amenities_list"></p></div>`,
         page_gallery: `<div id="page_gallery" class="pagediv"><h3 data-lang-key="gallery_heading"></h3><div class="photo-gallery">${[...Array(14).keys()].map(i => `<div class="frame"><img src="img/${i < 3 ? 'kalen' + (3 - i) : 'zbr' + (i + 1)}.jpg" alt="Photo"></div>`).join('')}</div></div>`,
-        page_contact: `<div id="page_contact" class="pagediv"><h3 data-lang-key="contact_heading"></h3>${contactHTML}<hr style="border-color: var(--glass-border); margin: 20px 0;"><p data-lang-key="address_value"></p><p><a href="https://www.google.com/maps/search/?api=1&query=Kubínova,+Praha+5+Zbraslav" target="_blank" rel="noopener" data-lang-key="view_map"></a></p><p data-lang-key="company_id"></p><a href="http://navrcholu.cz/" target="_blank"><script src="https://c1.navrcholu.cz/code?site=139642;t=lb14" async defer></script></a></div>`
+        page_contact: `<div id="page_contact" class="pagediv"><h3 data-lang-key="contact_heading"></h3>${contactHTML}<hr style="border-color: var(--glass-border); margin: 20px 0;"><p data-lang-key="address_value"></p><p><a href="https://www.google.com/maps/search/?api=1&query=Kubínova,Praha+5+Zbraslav" target="_blank" rel="noopener" data-lang-key="view_map"></a></p><p data-lang-key="company_id"></p><a href="http://navrcholu.cz/" target="_blank"><script src="https://c1.navrcholu.cz/code?site=139642;t=lb14" async defer></script></a></div>`
     };
 
     const formatDateToYYYYMMDD = (date) => {
@@ -73,11 +80,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (publicConfig.contact_phone && phoneEl) {
             phoneEl.href = "tel:" + publicConfig.contact_phone.replace(/\s/g, '');
             phoneEl.textContent = publicConfig.contact_phone;
-        } else if (phoneEl) { phoneEl.parentElement.style.display = 'none'; }
+        } else if (phoneEl) { phoneEl.parentElement.parentElement.style.display = 'none'; }
         if (publicConfig.contact_email && emailEl) {
             emailEl.href = "mailto:" + publicConfig.contact_email;
             emailEl.textContent = publicConfig.contact_email;
-        } else if (emailEl) { emailEl.parentElement.style.display = 'none'; }
+        } else if (emailEl) { emailEl.parentElement.parentElement.style.display = 'none'; }
     };
 
     const localizeContent = () => {
@@ -102,13 +109,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const errorEl = document.getElementById('error-message');
         const submitBtn = form.querySelector('button[type="submit"]');
 
-        const flatpickrOptions = {
+        // --- ZMĚNA ZDE: Přidán parametr 'locale' do nastavení kalendáře ---
+        const endDatePicker = flatpickr(endDateEl, {
             minDate: minOrderDate,
             disable: unavailableDates,
             dateFormat: "Y-m-d",
-        };
-        flatpickr(startDateEl, flatpickrOptions);
-        flatpickr(endDateEl, flatpickrOptions);
+            locale: currentLang // Nastaví jazyk kalendáře (cs, en, de)
+        });
+
+        flatpickr(startDateEl, {
+            minDate: minOrderDate,
+            disable: unavailableDates,
+            dateFormat: "Y-m-d",
+            locale: currentLang, // Nastaví jazyk kalendáře (cs, en, de)
+        });
 
         const isDateAvailable = (start, end) => {
             for (let d = new Date(start); d < new Date(end); d.setDate(d.getDate() + 1)) {
