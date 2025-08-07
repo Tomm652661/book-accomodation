@@ -9,7 +9,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let publicConfig = {};
     let lastCalculatedPrice = null;
 
-    const contactHTML = `...`; // beze změny
+    const contactHTML = `
+        <div class="contact-info-block">
+            <p><strong>Telefon:</strong> <a id="kontakt-telefon" href="#"></a></p>
+            <p><strong>Email:</strong> <a id="kontakt-email" href="#"></a></p>
+        </div>
+    `;
 
     const pageTemplates = {
         page_index: `
@@ -22,15 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <tr><td></td><td data-lang-key="price_eur_value"></td></tr>
                     <tr><td></td><td data-lang-key="price_btc_value"></td></tr>
                     <tr><td data-lang-key="address_label"></td><td data-lang-key="address_value"></td></tr>
-                    <tr><td data-lang-key="wifi_free"></td><td data-lang-key="parking_free"></td></tr>
-                    <tr>
-                        <td colspan="2" style="padding-top: 20px;">
-                            <a href="https://1url.cz/muFX9" target="_blank" rel="noopener" class="booking-link-layout">
-                                <img src="img/booking.png" alt="Booking.com" style="width: 250px; height: 200px; object-fit: contain;">
-                                <p data-lang-key="booking_reviews_text"></p>
-                            </a>
-                        </td>
-                    </tr>
+                    
+                    <tr><td colspan="2" style="padding-top: 20px;"><a href="https://1url.cz/muFX9" target="_blank" rel="noopener" class="booking-link-layout"><img src="img/booking.png" alt="Booking.com" style="width: 250px; height: 200px; object-fit: contain;"><p data-lang-key="booking_reviews_text"></p></a></td></tr>
                     <tr><td colspan="2">${contactHTML}</td></tr>
                 </table>
             </div>
@@ -53,9 +51,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p data-lang-key="payment_info"></p>
                 </div>
             </div>`,
-        page_amenities: `...`, // beze změny
-        page_gallery: `...`, // beze změny
-        page_contact: `...` // beze změny
+        page_amenities: `<div id="page_amenities" class="pagediv"><h3 data-lang-key="amenities_heading"></h3><p data-lang-key="amenities_list"></p></div>`,
+        page_gallery: `<div id="page_gallery" class="pagediv"><h3 data-lang-key="gallery_heading"></h3><div class="photo-gallery">${[...Array(14).keys()].map(i => `<div class="frame"><img src="img/${i < 3 ? 'kalen' + (3 - i) : 'zbr' + (i + 1)}.jpg" alt="Photo"></div>`).join('')}</div></div>`,
+        page_contact: `<div id="page_contact" class="pagediv"><h3 data-lang-key="contact_heading"></h3>${contactHTML}<hr style="border-color: var(--glass-border); margin: 20px 0;"><p data-lang-key="address_value"></p><p><a href="https://www.google.com/maps/search/?api=1&query=Kubínova,Praha+5+Zbraslav" target="_blank" rel="noopener" data-lang-key="view_map"></a></p><p data-lang-key="company_id"></p><a href="http://navrcholu.cz/" target="_blank"><script src="https://c1.navrcholu.cz/code?site=139642;t=lb14" async defer></script></a></div>`
     };
 
     const formatDateToYYYYMMDD = (date) => { /* ... obsah beze změny ... */ };
