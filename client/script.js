@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
     `;
 
-    // Šablony pro obsah jednotlivých stránek
     const pageTemplates = {
         page_index: `
             <div id="page_index" class="pagediv">
@@ -32,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <tr><td data-lang-key="address_label"></td><td data-lang-key="address_value"></td></tr>
                     <tr><td data-lang-key="wifi_free"></td><td data-lang-key="parking_free"></td></tr>
                     <tr>
-                        <td colspan="2" style="padding-top: 20px;"><a href="https://www.booking.com/hotel/cz/prague-zbraslav-apartment.cs.html" target="_blank" rel="noopener"><img src="img/booking.png" alt="Booking.com" style="height: 32px;"></a></td>
+                        <td colspan="2" style="padding-top: 20px;"><a href="https://1url.cz/muFX9" target="_blank" rel="noopener"><img src="img/booking.png" alt="Booking.com" style="height: 32px;"></a></td>
                     </tr>
                     <tr>
                         <td colspan="2">${contactHTML}</td>
@@ -64,31 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `,
         page_amenities: `<div id="page_amenities" class="pagediv"><h3 data-lang-key="amenities_heading"></h3><p data-lang-key="amenities_list"></p></div>`,
-
-        // --- ZMĚNA ZDE: Nahrazení chybné smyčky za pevný a spolehlivý seznam obrázků ---
-        page_gallery: `
-            <div id="page_gallery" class="pagediv">
-                <h3 data-lang-key="gallery_heading"></h3>
-                <div class="photo-gallery">
-                    <div class="frame"><img src="img/kalen3.jpg" alt="Photo"></div>
-                    <div class="frame"><img src="img/kalen2.jpg" alt="Photo"></div>
-                    <div class="frame"><img src="img/kalen.jpg"  alt="Photo"></div>
-                    <div class="frame"><img src="img/zbr4.jpg"   alt="Photo"></div>
-                    <div class="frame"><img src="img/zbr5.jpg"   alt="Photo"></div>
-                    <div class="frame"><img src="img/zbr6.jpg"   alt="Photo"></div>
-                    <div class="frame"><img src="img/zbr7.jpg"   alt="Photo"></div>
-                    <div class="frame"><img src="img/zbr8.jpg"   alt="Photo"></div>
-                    <div class="frame"><img src="img/zbr9.jpg"   alt="Photo"></div>
-                    <div class="frame"><img src="img/zbr10.jpg"  alt="Photo"></div>
-                    <div class="frame"><img src="img/zbr11.jpg"  alt="Photo"></div>
-                    <div class="frame"><img src="img/zbr12.jpg"  alt="Photo"></div>
-                    <div class="frame"><img src="img/zbr13.jpg"  alt="Photo"></div>
-                    <div class="frame"><img src="img/zbr14.jpg"  alt="Photo"></div>
-                </div>
-            </div>
-        `,
-        // --- KONEC ZMĚNY ---
-
+        page_gallery: `<div id="page_gallery" class="pagediv"><h3 data-lang-key="gallery_heading"></h3><div class="photo-gallery">${[...Array(14).keys()].map(i => `<div class="frame"><img src="img/${i < 3 ? 'kalen' + (3 - i) : 'zbr' + (i + 1)}.jpg" alt="Photo"></div>`).join('')}</div></div>`,
         page_contact: `<div id="page_contact" class="pagediv"><h3 data-lang-key="contact_heading"></h3>${contactHTML}<hr style="border-color: var(--glass-border); margin: 20px 0;"><p data-lang-key="address_value"></p><p><a href="https://www.google.com/maps/search/?api=1&query=Kubínova,Praha+5+Zbraslav" target="_blank" rel="noopener" data-lang-key="view_map"></a></p><p data-lang-key="company_id"></p><a href="http://navrcholu.cz/" target="_blank"><script src="https://c1.navrcholu.cz/code?site=139642;t=lb14" async defer></script></a></div>`
     };
 
