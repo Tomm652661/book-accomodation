@@ -13,8 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // HTML blok pro znovupoužitelné kontaktní údaje
     const contactHTML = `
         <div class="contact-info-block">
-            <p><strong>Telefon:</strong> <a id="kontakt-telefon" href="#">[načítám...]</a></p>
-            <p><strong>Email:</strong> <a id="kontakt-email" href="#">[načítám...]</a></p>
+            <p><strong>Telefon:</strong> <a id="kontakt-telefon" href="#"></a></p>
+            <p><strong>Email:</strong> <a id="kontakt-email" href="#"></a></p>
         </div>
     `;
 
@@ -63,25 +63,32 @@ document.addEventListener('DOMContentLoaded', () => {
         `,
         page_amenities: `<div id="page_amenities" class="pagediv"><h3 data-lang-key="amenities_heading"></h3><p data-lang-key="amenities_list"></p></div>`,
         page_gallery: `<div id="page_gallery" class="pagediv"><h3 data-lang-key="gallery_heading"></h3><div class="photo-gallery">${[...Array(14).keys()].map(i => `<div class="frame"><img src="img/${i < 3 ? 'kalen' + (3 - i) : 'zbr' + (i + 1)}.jpg" alt="Photo"></div>`).join('')}</div></div>`,
-        page_contact: `<div id="page_contact" class="pagediv"><h3 data-lang-key="contact_heading"></h3>${contactHTML}<hr style="border-color: var(--glass-border); margin: 20px 0;"><p data-lang-key="address_value"></p><p><a href="https://www.google.com/maps/search/?api=1&query=Kubínova,+Praha+5+Zbraslav" target="_blank" rel="noopener" data-lang-key="view_map"></a></p><p data-lang-key="company_id"></p><a href="http://navrcholu.cz/" target="_blank"><script src="https://c1.navrcholu.cz/code?site=139642;t=lb14" async defer></script></a></div>`
+        page_contact: `<div id="page_contact" class="pagediv"><h3 data-lang-key="contact_heading"></h3>${contactHTML}<hr style="border-color: var(--glass-border); margin: 20px 0;"><p data-lang-key="address_value"></p><p><a href="https://www.google.com/maps/search/?api=1&query=Kubínova,Praha+5+Zbraslav" target="_blank" rel="noopener" data-lang-key="view_map"></a></p><p data-lang-key="company_id"></p><a href="http://navrcholu.cz/" target="_blank"><script src="https://c1.navrcholu.cz/code?site=139642;t=lb14" async defer></script></a></div>`
     };
 
+    // --- VYLEPŠENÁ FUNKCE ---
     const populateContactInfo = () => {
         const phoneEl = document.getElementById('kontakt-telefon');
         const emailEl = document.getElementById('kontakt-email');
         const phone = publicConfig.contact_phone;
         const email = publicConfig.contact_email;
 
+        // Zpracování telefonu
         if (phoneEl && phone) {
             phoneEl.href = "tel:" + phone.replace(/\s/g, '');
             phoneEl.textContent = phone;
         } else if (phoneEl) {
-            phoneEl.closest('.contact-info-block').style.display = 'none';
+            // Skryje pouze rodičovský odstavec <p> telefonu, pokud číslo chybí
+            phoneEl.parentElement.style.display = 'none';
         }
 
+        // Zpracování emailu
         if (emailEl && email) {
             emailEl.href = "mailto:" + email;
             emailEl.textContent = email;
+        } else if (emailEl) {
+            // Skryje pouze rodičovský odstavec <p> e-mailu, pokud e-mail chybí
+            emailEl.parentElement.style.display = 'none';
         }
     };
 
