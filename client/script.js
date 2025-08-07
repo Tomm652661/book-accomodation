@@ -10,6 +10,14 @@ document.addEventListener('DOMContentLoaded', () => {
     let publicConfig = {};
     let lastCalculatedPrice = null;
 
+    // HTML blok pro znovupoužitelné kontaktní údaje
+    const contactHTML = `
+        <div class="contact-info-block">
+            <p><strong>Telefon:</strong> <a id="kontakt-telefon" href="#">[načítám...]</a></p>
+            <p><strong>Email:</strong> <a id="kontakt-email" href="#">[načítám...]</a></p>
+        </div>
+    `;
+
     // HTML šablony pro jednotlivé stránky
     const pageTemplates = {
         page_index: `
@@ -24,8 +32,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     <tr><td data-lang-key="address_label"></td><td data-lang-key="address_value"></td></tr>
                     <tr><td data-lang-key="wifi_free"></td><td data-lang-key="parking_free"></td></tr>
                     <tr>
-                        <td><a href="https://www.booking.com/hotel/cz/cely-dum-s-vybavenou-kuchyni-koupelna-s-virivkou.cs.html" target="_blank" rel="noopener"><img src="img/booking.png" alt="Booking.com"></a></td>
-                        <td><img src="img/tlf.png" alt="Telefon"> +420 123 456 789</td>
+                        <td colspan="2"><a href="https://www.booking.com/hotel/cz/prague-zbraslav-apartment.cs.html" target="_blank" rel="noopener"><img src="img/booking.png" alt="Booking.com" style="height: 32px;"></a></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">${contactHTML}</td>
                     </tr>
                 </table>
             </div>
@@ -69,13 +79,36 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `,
         page_contact: `
-            <div id="page_contact" class="pagediv"><h3 data-lang-key="contact_heading"></h3>
+            <div id="page_contact" class="pagediv">
+                <h3 data-lang-key="contact_heading"></h3>
                 <p><a href="https://www.google.com/maps/search/?api=1&query=Kubínova%2C+Praha+5+Zbraslav" target="_blank" rel="noopener" data-lang-key="view_map"></a></p>
-                <p><img src="img/tlf.png" alt="Telefon"> +420 123 456 789</p>
-                <p data-lang-key="address_value"></p><p data-lang-key="company_id"></p>
+                ${contactHTML}
+                <p data-lang-key="address_value"></p>
+                <p data-lang-key="company_id"></p>
                 <a href="http://navrcholu.cz/" target="_blank"><script src="https://c1.navrcholu.cz/code?site=139642;t=lb14" async defer></script></a>
             </div>
         `
+    };
+
+    const populateContactInfo = () => {
+        const phoneEl = document.getElementById('kontakt-telefon');
+        const emailEl = document.getElementById('kontakt-email');
+        const phone = publicConfig.contact_phone;
+        const email = publicConfig.contact_email;
+
+        if (phoneEl && phone) {
+            phoneEl.href = "tel:" + phone.replace(/\s/g, '');
+            phoneEl.textContent = phone;
+        } else if (phoneEl) {
+            phoneEl.parentElement.style.display = 'none';
+        }
+
+        if (emailEl && email) {
+            emailEl.href = "mailto:" + email;
+            emailEl.textContent = email;
+        } else if (emailEl) {
+            emailEl.parentElement.style.display = 'none';
+        }
     };
 
     const localizeContent = () => {
@@ -99,7 +132,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        if (pageId === 'page_index') setupBookingForm();
+        if (pageId === 'page_index') {
+            setupBookingForm();
+        }
+
+        populateContactInfo();
         localizeContent();
     };
 
@@ -214,38 +251,39 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Inicializace jazykového přepínače
-        const languageSwitcher = document.getElementById('language-switcher');
-        if (languageSwitcher) {
-            languageSwitcher.addEventListener('click', (e) => {
-                if (e.target.tagName === 'BUTTON') {
-                    const newLang = e.target.getAttribute('data-lang');
-                    if (newLang && translations[newLang]) {
-                        currentLang = newLang;
-                        document.querySelectorAll('#language-switcher button').forEach(btn => btn.classList.remove('active'));
-                        e.target.classList.add('active');
-                        const currentPageClass = document.querySelector('#menu li.active').classList[0];
-                        renderPage('page_' + currentPageClass);
-                    }
-                }
-            });
-        }
-
-        // Opravená navigace pomocí Event Delegation
+        const topbarWrapper = document.querySelector('#topbar .wrapper');
+        const rightPanel = document.createElement('div');
+        rightPanel.id = 'topbar-right-panel';
         const menu = document.getElementById('menu');
-        if (menu) {
-            menu.addEventListener('click', (e) => {
-                const link = e.target.closest('a');
-                if (link) {
-                    e.preventDefault();
-                    const href = link.getAttribute('href');
-                    if (href && href.startsWith('#page_')) {
-                        const pageId = href.substring(1);
-                        renderPage(pageId);
-                    }
-                }
+        const langSwitcher = document.createElement('div');
+        langSwitcher.id = 'language-switcher';
+
+        ['cs', 'en', 'de'].forEach(lang => {
+            const button = document.createElement('button');
+            button.textContent = lang.toUpperCase();
+            button.classList.toggle('active', lang === currentLang);
+            button.addEventListener('click', () => {
+                currentLang = lang;
+                document.querySelectorAll('#language-switcher button').forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                const currentPageClass = document.querySelector('#menu li.active').classList[0];
+                renderPage('page_' + currentPageClass);
             });
-        }
+            langSwitcher.appendChild(button);
+        });
+
+        rightPanel.appendChild(menu);
+        rightPanel.appendChild(langSwitcher);
+        topbarWrapper.appendChild(rightPanel);
+
+        menu.addEventListener('click', (e) => {
+            const link = e.target.closest('a');
+            if (link) {
+                e.preventDefault();
+                const pageId = 'page_' + link.getAttribute('href').substring(1);
+                renderPage(pageId);
+            }
+        });
 
         renderPage('page_index');
     };

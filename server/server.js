@@ -54,6 +54,8 @@ app.get('/api/config', (req, res) => {
             account_eur: process.env.ACCOUNT_EUR,
             btc_wallet_address: process.env.BTC_WALLET_ADDRESS,
             min_night_count: config.min_night_count
+            contact_email: process.env.CONTACT_EMAIL,
+            contact_phone: process.env.CONTACT_PHONE
         });
     } catch (error) {
         res.status(500).json({ error: 'Server configuration error.' });
