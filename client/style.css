@@ -3,21 +3,16 @@
 
 /* --- Definice barevné palety (CSS Proměnné) --- */
 :root {
-    --bg-color: #1a1a2e; /* Tmavě modré pozadí jako záložní */
-    --primary-text: #f0f0f0; /* Téměř bílý text */
-    --secondary-text: #b3b3e6; /* Světle fialový text */
-    --accent-color: #88a2ff; /* Pastelová modro-fialová pro akcenty */
-    --glass-bg: rgba(20, 20, 40, 0.65); /* Tmavé poloprůhledné pozadí skla */
-    --glass-border: rgba(255, 255, 255, 0.2); /* Světlý okraj skla */
+    --bg-color: #1a1a2e;
+    --primary-text: #f0f0f0;
+    --secondary-text: #b3b3e6;
+    --accent-color: #88a2ff;
+    --glass-bg: rgba(20, 20, 40, 0.65);
+    --glass-border: rgba(255, 255, 255, 0.2);
 }
 
 /* --- Globální styly a pozadí --- */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
+* { margin: 0; padding: 0; box-sizing: border-box; }
 body {
     font-family: 'Montserrat', sans-serif;
     background-color: var(--bg-color);
@@ -29,23 +24,10 @@ body {
     background-attachment: fixed;
     min-height: 100vh;
 }
-
-.wrapper {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
+.wrapper { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
 
 /* --- Hlavička a navigace --- */
-#topbar {
-    background: rgba(10, 10, 20, 0.5);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--glass-border);
-    padding: 10px 0;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
+#topbar { background: rgba(10, 10, 20, 0.5); backdrop-filter: blur(10px); border-bottom: 1px solid var(--glass-border); padding: 10px 0; position: sticky; top: 0; z-index: 100; }
 #topbar .wrapper { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
 #title h1 { font-size: 1.5em; font-weight: 600; color: var(--primary-text); text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
 #topbar-right-panel { display: flex; align-items: center; gap: 20px; }
@@ -71,24 +53,6 @@ a:hover { color: white; }
 .form-group input, .form-group select { width: 100%; padding: 12px; background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); border-radius: 8px; color: var(--primary-text); font-family: 'Montserrat', sans-serif; }
 .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--accent-color); }
 .form-group label { font-weight: 400; margin-bottom: 8px; display: block; }
-
-/* --- PŘIDANÉ STYLY ZDE --- */
-/* Vylepšení vzhledu a chování polí pro datum */
-input[type="date"] {
-    cursor: pointer;
-    color-scheme: dark; /* Zajistí tmavý vzhled kalendáře v podporovaných prohlížečích */
-}
-/* Vzhled ikonky kalendáře v Chrome/Edge/Safari */
-input[type="date"]::-webkit-calendar-picker-indicator {
-    cursor: pointer;
-    filter: invert(70%) sepia(20%) saturate(500%) hue-rotate(200deg);
-    transition: filter 0.3s ease;
-}
-input[type="date"]:hover::-webkit-calendar-picker-indicator {
-    filter: invert(90%) sepia(20%) saturate(500%) hue-rotate(200deg);
-}
-/* --- KONEC PŘIDANÉ ČÁSTI --- */
-
 button[type="submit"] { width: 100%; padding: 12px; background-color: var(--accent-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.3s; }
 button[type="submit"]:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(136, 162, 255, 0.4); }
 button:disabled { background-color: #555; cursor: not-allowed; }
@@ -100,3 +64,41 @@ button:disabled { background-color: #555; cursor: not-allowed; }
 .photo-gallery .frame img:hover { transform: scale(1.05); box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
 #bottombar { text-align: center; padding: 40px 20px; color: var(--secondary-text); font-size: 0.9em; background: transparent; }
 @media (max-width: 768px) { #topbar .wrapper, #topbar-right-panel { flex-direction: column; gap: 15px; } .pagediv { padding: 20px; } h3 { font-size: 1.5em; } }
+
+/* --- PŘIDANÉ STYLY ZDE: Vzhled pro nový kalendář (Flatpickr) --- */
+.flatpickr-calendar {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    backdrop-filter: blur(10px);
+}
+.flatpickr-months .flatpickr-month, .flatpickr-weekday, .flatpickr-weekwrapper .flatpickr-weeks {
+    background: transparent;
+    color: var(--primary-text);
+}
+.flatpickr-day {
+    color: var(--secondary-text);
+    border-color: transparent;
+}
+.flatpickr-day:hover, .flatpickr-day:focus {
+    background: rgba(136, 162, 255, 0.2);
+    border-color: transparent;
+}
+.flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
+    background: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+}
+.flatpickr-day.flatpickr-disabled, .flatpickr-day.flatpickr-disabled:hover {
+    color: rgba(255, 255, 255, 0.2);
+    background: transparent;
+    cursor: not-allowed;
+}
+.flatpickr-months .flatpickr-prev-month, .flatpickr-months .flatpickr-next-month {
+    fill: var(--accent-color);
+}
+.numInput, .numInputWrapper, .arrowUp, .arrowDown {
+    border-color: var(--glass-border);
+    color: var(--primary-text);
+}
