@@ -10,11 +10,64 @@ document.addEventListener('DOMContentLoaded', () => {
     let publicConfig = {};
     let lastCalculatedPrice = null;
 
-    const contactHTML = `...`; // beze změny
-    const pageTemplates = { /* ... beze změny ... */ };
-    const formatDateToYYYYMMDD = (date) => { /* ... beze změny ... */ };
-    const populateContactInfo = () => { /* ... beze změny ... */ };
-    const localizeContent = () => { /* ... beze změny ... */ };
+    const contactHTML = `
+        <div class="contact-info-block">
+            <p><strong>Telefon:</strong> <a id="kontakt-telefon" href="#"></a></p>
+            <p><strong>Email:</strong> <a id="kontakt-email" href="#"></a></p>
+        </div>
+    `;
+
+    const pageTemplates = {
+        page_index: `
+            <div id="page_index" class="pagediv">
+                <h3 data-lang-key="menu_pricelist"></h3>
+                <div data-lang-key="pricelist_intro"></div>
+                <br>
+                <table class="pricing-table">
+                    <tr><td><strong data-lang-key="min_nights"></strong></td><td><strong data-lang-key="max_persons"></strong></td></tr>
+                    <tr><td data-lang-key="price_label"></td><td data-lang-key="price_value"></td></tr>
+                    <tr><td></td><td data-lang-key="price_eur_value"></td></tr>
+                    <tr><td></td><td data-lang-key="price_btc_value"></td></tr>
+                    <tr><td data-lang-key="address_label"></td><td data-lang-key="address_value"></td></tr>
+                    <tr><td data-lang-key="wifi_free"></td><td data-lang-key="parking_free"></td></tr>
+                    <tr><td colspan="2" style="padding-top: 20px;"><a href="https://www.booking.com/hotel/cz/prague-zbraslav-apartment.cs.html" target="_blank" rel="noopener"><img src="img/booking.png" alt="Booking.com" style="height: 32px;"></a></td></tr>
+                    <tr><td colspan="2">${contactHTML}</td></tr>
+                </table>
+            </div>
+            <div id="booking-container" class="pagediv">
+                <h3 data-lang-key="booking_heading"></h3>
+                <form id="booking-form">
+                    <div class="form-group"><label for="start-date" data-lang-key="checkin_date"></label><input type="date" id="start-date" required></div>
+                    <div class="form-group"><label for="end-date" data-lang-key="checkout_date"></label><input type="date" id="end-date" required></div>
+                    <div class="form-group"><label for="email" data-lang-key="email_label"></label><input type="email" id="email" required></div>
+                    <div class="form-group"><label for="currency" data-lang-key="currency_label"></label><select id="currency"><option>CZK</option><option>EUR</option><option>BTC</option></select></div>
+                    <div id="price-display"></div>
+                    <div id="error-message"></div>
+                    <button type="submit" data-lang-key="submit_button" disabled></button>
+                </form>
+                <div id="payment-options" style="display:none;">
+                    <h4 data-lang-key="payment_options"></h4><p data-lang-key="booking_confirmation_message"></p>
+                    <div id="payment-czk" class="payment-info" style="display:none;"><p><span data-lang-key="account_czk_label"></span> <b class="account-czk"></b></p></div>
+                    <div id="payment-eur" class="payment-info" style="display:none;"><p><span data-lang-key="account_eur_label"></span> <b class="account-eur"></b></p></div>
+                    <div id="payment-btc" class="payment-info" style="display:none;"><p><span data-lang-key="btc_address_label"></span> <b class="btc-address"></b></p><img id="btc-qr" alt="BTC QR Code"></div>
+                    <p data-lang-key="payment_info"></p>
+                </div>
+            </div>`,
+        page_amenities: `<div id="page_amenities" class="pagediv"><h3 data-lang-key="amenities_heading"></h3><p data-lang-key="amenities_list"></p></div>`,
+        page_gallery: `<div id="page_gallery" class="pagediv"><h3 data-lang-key="gallery_heading"></h3><div class="photo-gallery">${[...Array(14).keys()].map(i => `<div class="frame"><img src="img/${i < 3 ? 'kalen' + (3 - i) : 'zbr' + (i + 1)}.jpg" alt="Photo"></div>`).join('')}</div></div>`,
+        page_contact: `<div id="page_contact" class="pagediv"><h3 data-lang-key="contact_heading"></h3>${contactHTML}<hr style="border-color: var(--glass-border); margin: 20px 0;"><p data-lang-key="address_value"></p><p><a href="https://www.google.com/maps/search/?api=1&query=Kubínova,+Praha+5+Zbraslav" target="_blank" rel="noopener" data-lang-key="view_map"></a></p><p data-lang-key="company_id"></p><a href="http://navrcholu.cz/" target="_blank"><script src="https://c1.navrcholu.cz/code?site=139642;t=lb14" async defer></script></a></div>`
+    };
+
+    const formatDateToYYYYMMDD = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+    const populateContactInfo = () => { /* ... obsah beze změny ... */ };
+    const localizeContent = () => { /* ... obsah beze změny ... */ };
+    const renderPage = (pageId) => { /* ... obsah beze změny ... */ };
 
     const setupBookingForm = () => {
         const form = document.getElementById('booking-form');
@@ -27,11 +80,30 @@ document.addEventListener('DOMContentLoaded', () => {
         const submitBtn = form.querySelector('button[type="submit"]');
 
         let endDatePicker;
-        const startDatePicker = flatpickr(startDateEl, { /* ... beze změny ... */ });
-        endDatePicker = flatpickr(endDateEl, { /* ... beze změny ... */ });
+        const startDatePicker = flatpickr(startDateEl, {
+            minDate: minOrderDate,
+            disable: unavailableDates,
+            dateFormat: "Y-m-d",
+            locale: currentLang,
+            onClose: function(selectedDates) {
+                if (selectedDates[0]) {
+                    const nextDay = new Date(selectedDates[0]);
+                    nextDay.setDate(nextDay.getDate() + 1);
+                    endDatePicker.set('minDate', nextDay);
+                    endDatePicker.setDate(nextDay, true);
+                    endDatePicker.open();
+                }
+            }
+        });
+        endDatePicker = flatpickr(endDateEl, {
+            minDate: minOrderDate,
+            disable: unavailableDates,
+            dateFormat: "Y-m-d",
+            locale: currentLang
+        });
 
-        const isDateAvailable = (start, end) => { /* ... beze změny ... */ };
-        const updatePrice = async () => { /* ... beze změny ... */ };
+        const isDateAvailable = (start, end) => { /* ... obsah beze změny ... */ };
+        const updatePrice = async () => { /* ... obsah beze změny ... */ };
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -42,9 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ startDate: startDateEl.value, endDate: endDateEl.value, email: document.getElementById('email').value, currency: currencyEl.value })
                 });
-
                 const data = await response.json();
-
                 if (response.ok) {
                     form.style.display = 'none';
                     const paymentOptions = document.getElementById('payment-options');
@@ -58,11 +128,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     document.getElementById(`payment-${currencyEl.value.toLowerCase()}`).style.display = 'block';
                 } else {
-                    // --- VYLEPŠENÉ ZOBRAZENÍ CHYBY ZDE ---
                     const errorKey = data.error || 'server_error';
                     errorEl.textContent = translations[currentLang][errorKey] || translations[currentLang].server_error;
                     submitBtn.disabled = false;
-                    // --- KONEC VYLEPŠENÍ ---
                 }
             } catch (err) {
                 errorEl.textContent = translations[currentLang].server_error;
@@ -73,8 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
         [startDateEl, endDateEl, currencyEl].forEach(el => el.addEventListener('change', updatePrice));
     };
 
-    const renderPage = (pageId) => { /* ... beze změny ... */ };
-    const initializeApp = async () => { /* ... beze změny ... */ };
+    const initializeApp = async () => { /* ... obsah beze změny ... */ };
 
     initializeApp();
 });
