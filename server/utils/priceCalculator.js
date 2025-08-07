@@ -11,6 +11,7 @@ async function getBtcEurRate() {
         return data.bitcoin.eur;
     } catch (e) {
         console.error('Nepodařilo se načíst kurz BTC/EUR, používá se záložní hodnota.', e.message);
+        // Záložní hodnota v případě výpadku API
         return 60000;
     }
 }
@@ -25,19 +26,20 @@ async function calculatePrice(startDate, endDate, currency) {
 
     const nights = (end - start) / (1000 * 3600 * 24);
     if (nights <= 0) {
+        // Nyní povolujeme jakýkoliv počet nocí > 0
         throw new Error('Pobyt musí trvat alespoň jednu noc.');
     }
 
     let totalPrice = 0;
 
-    // --- ZMĚNA LOGIKY PRO VÝPOČET CENY ---
+    // --- OPRAVENÁ A FINÁLNÍ LOGIKA PRO VÝPOČET CENY ---
     // Pokud je pobyt kratší nebo roven minimálnímu počtu nocí (např. 1-6 nocí)
     if (nights <= config.min_night_count) {
         // Cena je fixní paušál: minimální počet nocí * cena za den.
         // Speciální ceny (např. Vánoce) se pro tento paušál neuplatňují.
         totalPrice = config.min_night_count * config.min_day_price;
     } else {
-        // Pokud je pobyt delší (7+ nocí), použije se původní logika s denní sazbou
+        // Pokud je pobyt delší (7+ nocí), použije se standardní logika s denní sazbou
         // a zohledněním speciálních cen.
         const specialPrices = config.special_day_prices;
         for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
@@ -47,7 +49,7 @@ async function calculatePrice(startDate, endDate, currency) {
             totalPrice += specialPrices[key] || config.min_day_price;
         }
     }
-    // --- KONEC ZMĚNY LOGIKY ---
+    // --- KONEC OBLASTI ZMĚN ---
 
     // Převod na měny zůstává beze změny
     switch (currency.toUpperCase()) {
