@@ -23,7 +23,7 @@
     "contact_heading": "Kontakt",
     "view_map": "Zobrazit mapu",
     "company_id": "IČO: 28206207",
-    "footer_text": "© 2025 Ubytování Praha Zbraslav",
+    "footer_text": "© 2025 www.accommodationinprague.com",
     "booking_heading": "Rezervace pobytu",
     "checkin_date": "Datum příjezdu:",
     "checkout_date": "Datum odjezdu:",
@@ -43,7 +43,8 @@
     "account_eur_label": "Číslo účtu EUR:",
     "btc_address_label": "BTC Adresa:",
     "booking_confirmation_message": "Objednávka přijata. Potvrzení bude zasláno na e-mail.",
-    "server_error": "Chyba serveru. Zkuste to prosím později."
+    "server_error": "Chyba serveru. Zkuste to prosím později.",
+    "error_email_send": "Chyba při odesílání e-mailu. Zkontrolujte prosím zadanou adresu nebo nás kontaktujte přímo."
   },
   "en": {
     "page_title": "Accommodation in Prague Zbraslav",
@@ -89,7 +90,8 @@
     "account_eur_label": "Account EUR:",
     "btc_address_label": "BTC Address:",
     "booking_confirmation_message": "Booking received. Confirmation will be sent via e-mail.",
-    "server_error": "Server error. Please try again later."
+    "server_error": "Server error. Please try again later.",
+    "error_email_send": "Failed to send email. Please check the address or contact us directly."
   },
   "de": {
     "page_title": "Unterkunft Prag Zbraslav",
@@ -135,6 +137,7 @@
     "account_eur_label": "EUR-Konto:",
     "btc_address_label": "BTC-Adresse:",
     "booking_confirmation_message": "Buchung erhalten. Bestätigung wird per E-Mail gesendet.",
-    "server_error": "Serverfehler. Bitte versuchen Sie es später noch einmal."
+    "server_error": "Serverfehler. Bitte versuchen Sie es später noch einmal.",
+    "error_email_send": "Fehler beim Senden der E-Mail. Bitte überprüfen Sie die Adresse oder kontaktieren Sie uns direkt."
   }
 }

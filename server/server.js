@@ -88,26 +88,42 @@ app.post('/api/calculate-price', async (req, res) => {
 app.post('/api/book', async (req, res) => {
     try {
         const { startDate, endDate, email, currency } = req.body;
+
         const currentlyBooked = JSON.parse(fs.readFileSync(bookedDatesPath, 'utf-8'));
         const newBookingDates = [];
         for (let d = new Date(startDate); d < new Date(endDate); d.setDate(d.getDate() + 1)) {
-            const dateString = d.toISOString().split('T')[0];
+            const dateString = formatDateToYYYYMMDD(d);
             if (currentlyBooked.includes(dateString)) {
                 return res.status(409).json({ error: 'conflict' });
             }
             newBookingDates.push(dateString);
         }
+
         const price = await calculatePrice(startDate, endDate, currency);
-        await sendBookingEmail({ startDate, endDate, email, price, currency });
+
+        try {
+            await sendBookingEmail({ startDate, endDate, email, price, currency });
+        } catch (emailError) {
+            console.error("KRITICKÁ CHYBA: Odeslání e-mailu selhalo!", emailError);
+            return res.status(500).json({ error: 'email_send_failed' });
+        }
+
         const updatedBookedDates = [...new Set([...currentlyBooked, ...newBookingDates])].sort();
         fs.writeFileSync(bookedDatesPath, JSON.stringify(updatedBookedDates, null, 2));
+
         res.status(200).json({ message: 'booking_confirmation_message', price: price });
+
     } catch (e) {
-        if (e.message.includes('Minimální délka pobytu')) {
-            return res.status(400).json({ error: e.message });
-        }
+        console.error('Došlo k obecné chybě při zpracování rezervace:', e);
         res.status(500).json({ error: 'server_error' });
     }
 });
+
+const formatDateToYYYYMMDD = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
 
 app.listen(port, () => console.log(`Server běží na http://localhost:${port}`));
