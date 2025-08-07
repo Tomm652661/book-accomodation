@@ -66,8 +66,10 @@ document.addEventListener('DOMContentLoaded', () => {
         `,
         page_amenities: `<div id="page_amenities" class="pagediv"><h3 data-lang-key="amenities_heading"></h3><p data-lang-key="amenities_list"></p></div>`,
         page_gallery: `<div id="page_gallery" class="pagediv"><h3 data-lang-key="gallery_heading"></h3><div class="photo-gallery">${[...Array(14).keys()].map(i => `<div class="frame"><img src="img/${i < 3 ? 'kalen' + (3 - i) : 'zbr' + (i + 1)}.jpg" alt="Photo"></div>`).join('')}</div></div>`,
-        page_contact: `<div id="page_contact" class="pagediv"><h3 data-lang-key="contact_heading"></h3>${contactHTML}<hr style="border-color: var(--glass-border); margin: 20px 0;"><p data-lang-key="address_value"></p><p><a href="http://googleusercontent.com/maps.google.com/8" target="_blank" rel="noopener" data-lang-key="view_map"></a></p><p data-lang-key="company_id"></p><a href="http://navrcholu.cz/" target="_blank"><script src="https://c1.navrcholu.cz/code?site=139642;t=lb14" async defer></script></a></div>`
+        page_contact: `<div id="page_contact" class="pagediv"><h3 data-lang-key="contact_heading"></h3>${contactHTML}<hr style="border-color: var(--glass-border); margin: 20px 0;"><p data-lang-key="address_value"></p><p><a href="http://googleusercontent.com/maps.google.com/9" target="_blank" rel="noopener" data-lang-key="view_map"></a></p><p data-lang-key="company_id"></p><a href="http://navrcholu.cz/" target="_blank"><script src="https://c1.navrcholu.cz/code?site=139642;t=lb14" async defer></script></a></div>`
     };
+
+    // --- POMOCNÉ FUNKCE ---
 
     const populateContactInfo = () => {
         const phoneEl = document.getElementById('kontakt-telefon');
@@ -215,6 +217,8 @@ document.addEventListener('DOMContentLoaded', () => {
         [startDateEl, endDateEl, currencyEl].forEach(el => el.addEventListener('change', updatePrice));
     };
 
+    // --- HLAVNÍ FUNKCE APLIKACE ---
+
     const initializeApp = async () => {
         try {
             const [transRes, availRes, confRes] = await Promise.all([
@@ -259,17 +263,23 @@ document.addEventListener('DOMContentLoaded', () => {
         rightPanel.appendChild(langSwitcher);
         topbarWrapper.appendChild(rightPanel);
 
+        // Nastavení navigace v menu
         menu.addEventListener('click', (e) => {
             const link = e.target.closest('a');
             if (link) {
                 e.preventDefault();
-                const pageId = 'page_' + link.getAttribute('href').substring(1);
+                // --- OPRAVA ZDE: Odstraněna duplicitní předpona 'page_' ---
+                // Odkaz v HTML (href) již obsahuje celou hodnotu, např. #page_amenities
+                // Proto ji bereme přímo.
+                const pageId = link.getAttribute('href').substring(1);
                 renderPage(pageId);
             }
         });
 
+        // Vykreslení výchozí stránky
         renderPage('page_index');
     };
 
+    // Spuštění aplikace
     initializeApp();
 });
