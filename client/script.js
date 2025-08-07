@@ -69,6 +69,15 @@ document.addEventListener('DOMContentLoaded', () => {
         page_contact: `<div id="page_contact" class="pagediv"><h3 data-lang-key="contact_heading"></h3>${contactHTML}<hr style="border-color: var(--glass-border); margin: 20px 0;"><p data-lang-key="address_value"></p><p><a href="https://www.google.com/maps/search/?api=1&query=Kubínova,Praha+5+Zbraslav" target="_blank" rel="noopener" data-lang-key="view_map"></a></p><p data-lang-key="company_id"></p><a href="http://navrcholu.cz/" target="_blank"><script src="https://c1.navrcholu.cz/code?site=139642;t=lb14" async defer></script></a></div>`
     };
 
+    // --- NOVÁ POMOCNÁ FUNKCE ---
+    // Tato funkce formátuje datum spolehlivě bez ohledu na časovou zónu.
+    const formatDateToYYYYMMDD = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
     const populateContactInfo = () => {
         const phoneEl = document.getElementById('kontakt-telefon');
         const emailEl = document.getElementById('kontakt-email');
@@ -113,8 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
         startDateEl.min = minOrderDate;
         endDateEl.min = minOrderDate;
 
-        // --- PŘIDANÝ KÓD ZDE ---
-        // Tato část zajistí, že po kliknutí na pole se otevře kalendář.
         if (startDateEl) {
             startDateEl.addEventListener('click', () => {
                 try { startDateEl.showPicker(); } catch (e) { console.error(e); }
@@ -125,11 +132,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 try { endDateEl.showPicker(); } catch (e) { console.error(e); }
             });
         }
-        // --- KONEC PŘIDANÉ ČÁSTI ---
 
         const isDateAvailable = (start, end) => {
             for (let d = new Date(start); d < new Date(end); d.setDate(d.getDate() + 1)) {
-                if (unavailableDates.includes(d.toISOString().slice(0, 10))) return false;
+                // --- OPRAVA ZDE: Použití nové, spolehlivé funkce pro formátování data ---
+                if (unavailableDates.includes(formatDateToYYYYMMDD(d))) {
+                    return false;
+                }
             }
             return true;
         };
