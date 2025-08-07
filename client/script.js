@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Globální proměnné pro stav aplikace
+    // Globální stav aplikace
     const API_BASE_URL = '/api';
     const contentEl = document.getElementById('content');
 
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let publicConfig = {};
     let lastCalculatedPrice = null;
 
-    // Šablona pro opakovaně používané kontaktní údaje
+    // HTML blok pro znovupoužitelné kontaktní údaje
     const contactHTML = `
         <div class="contact-info-block">
             <p><strong>Telefon:</strong> <a id="kontakt-telefon" href="#"></a></p>
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
     `;
 
-    // Šablony pro obsah jednotlivých stránek
+    // HTML šablony pro jednotlivé stránky
     const pageTemplates = {
         page_index: `
             <div id="page_index" class="pagediv">
@@ -66,29 +66,25 @@ document.addEventListener('DOMContentLoaded', () => {
         `,
         page_amenities: `<div id="page_amenities" class="pagediv"><h3 data-lang-key="amenities_heading"></h3><p data-lang-key="amenities_list"></p></div>`,
         page_gallery: `<div id="page_gallery" class="pagediv"><h3 data-lang-key="gallery_heading"></h3><div class="photo-gallery">${[...Array(14).keys()].map(i => `<div class="frame"><img src="img/${i < 3 ? 'kalen' + (3 - i) : 'zbr' + (i + 1)}.jpg" alt="Photo"></div>`).join('')}</div></div>`,
-        page_contact: `<div id="page_contact" class="pagediv"><h3 data-lang-key="contact_heading"></h3>${contactHTML}<hr style="border-color: var(--glass-border); margin: 20px 0;"><p data-lang-key="address_value"></p><p><a href="https://www.google.com/maps/search/?api=1&query=Kubínova,+Praha+5+Zbraslav" target="_blank" rel="noopener" data-lang-key="view_map"></a></p><p data-lang-key="company_id"></p><a href="http://navrcholu.cz/" target="_blank"><script src="https://c1.navrcholu.cz/code?site=139642;t=lb14" async defer></script></a></div>`
+        page_contact: `<div id="page_contact" class="pagediv"><h3 data-lang-key="contact_heading"></h3>${contactHTML}<hr style="border-color: var(--glass-border); margin: 20px 0;"><p data-lang-key="address_value"></p><p><a href="https://www.google.com/maps/search/?api=1&query=Kubínova,Praha+5+Zbraslav" target="_blank" rel="noopener" data-lang-key="view_map"></a></p><p data-lang-key="company_id"></p><a href="http://navrcholu.cz/" target="_blank"><script src="https://c1.navrcholu.cz/code?site=139642;t=lb14" async defer></script></a></div>`
     };
-
-    // --- POMOCNÉ FUNKCE ---
 
     const populateContactInfo = () => {
         const phoneEl = document.getElementById('kontakt-telefon');
         const emailEl = document.getElementById('kontakt-email');
         const phone = publicConfig.contact_phone;
         const email = publicConfig.contact_email;
-
         if (phoneEl && phone) {
             phoneEl.href = "tel:" + phone.replace(/\s/g, '');
             phoneEl.textContent = phone;
         } else if (phoneEl) {
-            phoneEl.parentElement.style.display = 'none';
+            phoneEl.parentElement.parentElement.style.display = 'none';
         }
-
         if (emailEl && email) {
             emailEl.href = "mailto:" + email;
             emailEl.textContent = email;
         } else if (emailEl) {
-            emailEl.parentElement.style.display = 'none';
+            emailEl.parentElement.parentElement.style.display = 'none';
         }
     };
 
@@ -117,6 +113,20 @@ document.addEventListener('DOMContentLoaded', () => {
         startDateEl.min = minOrderDate;
         endDateEl.min = minOrderDate;
 
+        // --- PŘIDANÝ KÓD ZDE ---
+        // Tato část zajistí, že po kliknutí na pole se otevře kalendář.
+        if (startDateEl) {
+            startDateEl.addEventListener('click', () => {
+                try { startDateEl.showPicker(); } catch (e) { console.error(e); }
+            });
+        }
+        if (endDateEl) {
+            endDateEl.addEventListener('click', () => {
+                try { endDateEl.showPicker(); } catch (e) { console.error(e); }
+            });
+        }
+        // --- KONEC PŘIDANÉ ČÁSTI ---
+
         const isDateAvailable = (start, end) => {
             for (let d = new Date(start); d < new Date(end); d.setDate(d.getDate() + 1)) {
                 if (unavailableDates.includes(d.toISOString().slice(0, 10))) return false;
@@ -128,19 +138,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const startDate = startDateEl.value;
             const endDate = endDateEl.value;
             const currency = currencyEl.value;
-
             errorEl.textContent = '';
             priceEl.textContent = '';
             lastCalculatedPrice = null;
             submitBtn.disabled = true;
-
             if (!startDate || !endDate || new Date(endDate) <= new Date(startDate)) return;
-
             if (!isDateAvailable(startDate, endDate)) {
                 errorEl.textContent = translations[currentLang].error_message;
                 return;
             }
-
             try {
                 const response = await fetch(`${API_BASE_URL}/calculate-price`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -208,16 +214,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 li.classList.add('active');
             }
         });
-
         if (pageId === 'page_index') {
             setupBookingForm();
         }
-
         populateContactInfo();
         localizeContent();
     };
-
-    // --- HLAVNÍ FUNKCE APLIKACE ---
 
     const initializeApp = async () => {
         try {
@@ -226,7 +228,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 fetch(`${API_BASE_URL}/availability`),
                 fetch(`${API_BASE_URL}/config`)
             ]);
-
             translations = await transRes.json();
             const availability = await availRes.json();
             unavailableDates = availability.unavailableDates;
@@ -240,7 +241,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const menu = document.getElementById('menu');
         const langSwitcher = document.getElementById('language-switcher');
-
         ['cs', 'en', 'de'].forEach(lang => {
             const button = document.createElement('button');
             button.textContent = lang.toUpperCase();
@@ -267,6 +267,5 @@ document.addEventListener('DOMContentLoaded', () => {
         renderPage('page_index');
     };
 
-    // Spuštění aplikace
     initializeApp();
 });

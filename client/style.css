@@ -23,8 +23,6 @@ body {
     background-color: var(--bg-color);
     color: var(--primary-text);
     line-height: 1.7;
-
-    /* ZDE VLOŽTE OBRÁZEK NA POZADÍ */
     background-image: url('img/pozadi.jpg');
     background-size: cover;
     background-position: center center;
@@ -48,192 +46,57 @@ body {
     top: 0;
     z-index: 100;
 }
-
-#topbar .wrapper {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-#title h1 {
-    font-size: 1.5em;
-    font-weight: 600;
-    color: var(--primary-text);
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-}
-
-#topbar-right-panel {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-#menu ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    gap: 10px;
-}
-
-#menu a {
-    text-decoration: none;
-    color: var(--secondary-text);
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-weight: 400;
-    transition: all 0.3s ease;
-}
-
-#menu a:hover, #menu li.active a {
-    background-color: var(--accent-color);
-    color: white;
-}
-
-#language-switcher button {
-    background: transparent;
-    border: 1px solid var(--secondary-text);
-    color: var(--secondary-text);
-    padding: 5px 10px;
-    border-radius: 15px;
-    margin-left: 5px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-#language-switcher button:hover, #language-switcher button.active {
-    background: var(--accent-color);
-    border-color: var(--accent-color);
-    color: white;
-}
+#topbar .wrapper { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+#title h1 { font-size: 1.5em; font-weight: 600; color: var(--primary-text); text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
+#topbar-right-panel { display: flex; align-items: center; gap: 20px; }
+#menu ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 10px; }
+#menu a { text-decoration: none; color: var(--secondary-text); padding: 8px 16px; border-radius: 20px; font-weight: 400; transition: all 0.3s ease; }
+#menu a:hover, #menu li.active a { background-color: var(--accent-color); color: white; }
+#language-switcher button { background: transparent; border: 1px solid var(--secondary-text); color: var(--secondary-text); padding: 5px 10px; border-radius: 15px; margin-left: 5px; cursor: pointer; transition: all 0.3s ease; }
+#language-switcher button:hover, #language-switcher button.active { background: var(--accent-color); border-color: var(--accent-color); color: white; }
 
 /* --- "Smoke-Glass" obsahové bloky --- */
-#content-wrapper {
-    padding-top: 40px;
-}
-
-.pagediv {
-    background: var(--glass-bg);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
-    padding: 30px 40px;
-    margin-bottom: 30px;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-}
-
-h3, h4 {
-    font-weight: 300;
-    color: var(--primary-text);
-    border-bottom: 1px solid var(--accent-color);
-    padding-bottom: 15px;
-    margin-bottom: 25px;
-}
+#content-wrapper { padding-top: 40px; }
+.pagediv { background: var(--glass-bg); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 30px 40px; margin-bottom: 30px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); }
+h3, h4 { font-weight: 300; color: var(--primary-text); border-bottom: 1px solid var(--accent-color); padding-bottom: 15px; margin-bottom: 25px; }
 h3 { font-size: 2em; }
 h4 { font-size: 1.5em; }
-
-
-p, td, li {
-    color: var(--secondary-text);
-    font-weight: 300;
-}
-
-a {
-    color: var(--accent-color);
-    text-decoration: none;
-    transition: color 0.3s;
-}
-a:hover {
-    color: white;
-}
+p, td, li { color: var(--secondary-text); font-weight: 300; }
+a { color: var(--accent-color); text-decoration: none; transition: color 0.3s; }
+a:hover { color: white; }
 
 /* --- Formulář a tabulky ve stylu "Glass" --- */
-.pricing-table td {
-    border-color: var(--glass-border);
-    padding: 15px 5px;
-}
+.pricing-table td { border-color: var(--glass-border); padding: 15px 5px; }
 .pricing-table img { height: 20px; filter: invert(80%); vertical-align: middle; }
+.form-group input, .form-group select { width: 100%; padding: 12px; background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); border-radius: 8px; color: var(--primary-text); font-family: 'Montserrat', sans-serif; }
+.form-group input:focus, .form-group select:focus { outline: none; border-color: var(--accent-color); }
+.form-group label { font-weight: 400; margin-bottom: 8px; display: block; }
 
-.form-group input, .form-group select {
-    width: 100%;
-    padding: 12px;
-    background: rgba(0,0,0,0.2);
-    border: 1px solid var(--glass-border);
-    border-radius: 8px;
-    color: var(--primary-text);
-    font-family: 'Montserrat', sans-serif;
-}
-.form-group input:focus, .form-group select:focus {
-    outline: none;
-    border-color: var(--accent-color);
-}
-.form-group label {
-    font-weight: 400;
-    margin-bottom: 8px;
-    display: block;
-}
-
-button[type="submit"] {
-    width: 100%;
-    padding: 12px;
-    background-color: var(--accent-color);
-    color: white;
-    border: none;
-    border-radius: 8px;
+/* --- PŘIDANÉ STYLY ZDE --- */
+/* Vylepšení vzhledu a chování polí pro datum */
+input[type="date"] {
     cursor: pointer;
-    font-size: 16px;
-    font-weight: 600;
-    transition: all 0.3s;
+    color-scheme: dark; /* Zajistí tmavý vzhled kalendáře v podporovaných prohlížečích */
 }
-button[type="submit"]:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(136, 162, 255, 0.4);
+/* Vzhled ikonky kalendáře v Chrome/Edge/Safari */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(70%) sepia(20%) saturate(500%) hue-rotate(200deg);
+    transition: filter 0.3s ease;
 }
-button:disabled {
-    background-color: #555;
-    cursor: not-allowed;
+input[type="date"]:hover::-webkit-calendar-picker-indicator {
+    filter: invert(90%) sepia(20%) saturate(500%) hue-rotate(200deg);
 }
+/* --- KONEC PŘIDANÉ ČÁSTI --- */
 
-#price-display {
-    font-size: 1.3em;
-    font-weight: 600;
-    text-align: center;
-    color: #a2ff88;
-    margin: 20px 0;
-    min-height: 25px;
-}
-#error-message {
-    color: #ff8888;
-    text-align: center;
-    min-height: 20px;
-}
+button[type="submit"] { width: 100%; padding: 12px; background-color: var(--accent-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.3s; }
+button[type="submit"]:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(136, 162, 255, 0.4); }
+button:disabled { background-color: #555; cursor: not-allowed; }
+#price-display { font-size: 1.3em; font-weight: 600; text-align: center; color: #a2ff88; margin: 20px 0; min-height: 25px; }
+#error-message { color: #ff8888; text-align: center; min-height: 20px; }
 .payment-info { margin: 15px 0; padding: 15px; border-left: 4px solid var(--accent-color); background: rgba(136, 162, 255, 0.1); border-radius: 4px; }
-
-/* --- Galerie a patička --- */
 .photo-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
 .photo-gallery .frame img { width: 100%; height: 150px; border-radius: 8px; object-fit: cover; transition: all 0.3s; }
 .photo-gallery .frame img:hover { transform: scale(1.05); box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
-
-#bottombar {
-    text-align: center;
-    padding: 40px 20px;
-    color: var(--secondary-text);
-    font-size: 0.9em;
-    background: transparent;
-}
-
-/* --- Responzivita --- */
-@media (max-width: 768px) {
-    #topbar .wrapper, #topbar-right-panel {
-        flex-direction: column;
-        gap: 15px;
-    }
-    .pagediv {
-        padding: 20px;
-    }
-    h3 {
-        font-size: 1.5em;
-    }
-}
+#bottombar { text-align: center; padding: 40px 20px; color: var(--secondary-text); font-size: 0.9em; background: transparent; }
+@media (max-width: 768px) { #topbar .wrapper, #topbar-right-panel { flex-direction: column; gap: 15px; } .pagediv { padding: 20px; } h3 { font-size: 1.5em; } }
