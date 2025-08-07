@@ -44,7 +44,8 @@
     "btc_address_label": "BTC Adresa:",
     "booking_confirmation_message": "Objednávka přijata. Potvrzení bude zasláno na e-mail.",
     "server_error": "Chyba serveru. Zkuste to prosím později.",
-    "error_email_send": "Chyba při odesílání e-mailu. Zkontrolujte prosím zadanou adresu nebo nás kontaktujte přímo."
+    "error_email_send": "Chyba při odesílání e-mailu. Zkontrolujte prosím zadanou adresu nebo nás kontaktujte přímo.",
+    "booking_reviews_text": "Zde si můžete prohlédnout hodnocení ubytovaných zákazníků"
   },
   "en": {
     "page_title": "Accommodation in Prague Zbraslav",
@@ -91,7 +92,8 @@
     "btc_address_label": "BTC Address:",
     "booking_confirmation_message": "Booking received. Confirmation will be sent via e-mail.",
     "server_error": "Server error. Please try again later.",
-    "error_email_send": "Failed to send email. Please check the address or contact us directly."
+    "error_email_send": "Failed to send email. Please check the address or contact us directly.",
+    "booking_reviews_text": "Click here to see reviews from our guests"
   },
   "de": {
     "page_title": "Unterkunft Prag Zbraslav",
@@ -138,6 +140,7 @@
     "btc_address_label": "BTC-Adresse:",
     "booking_confirmation_message": "Buchung erhalten. Bestätigung wird per E-Mail gesendet.",
     "server_error": "Serverfehler. Bitte versuchen Sie es später noch einmal.",
-    "error_email_send": "Fehler beim Senden der E-Mail. Bitte überprüfen Sie die Adresse oder kontaktieren Sie uns direkt."
+    "error_email_send": "Fehler beim Senden der E-Mail. Bitte überprüfen Sie die Adresse oder kontaktieren Sie uns direkt.",
+    "booking_reviews_text": "Klicken Sie hier, um Bewertungen unserer Gäste zu sehen"
   }
 }

@@ -1,7 +1,4 @@
-/* --- Import moderního fontu z Google Fonts --- */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap');
-
-/* --- Definice barevné palety (CSS Proměnné) --- */
 :root {
     --bg-color: #1a1a2e;
     --primary-text: #f0f0f0;
@@ -10,8 +7,6 @@
     --glass-bg: rgba(20, 20, 40, 0.65);
     --glass-border: rgba(255, 255, 255, 0.2);
 }
-
-/* --- Globální styly a pozadí --- */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
     font-family: 'Montserrat', sans-serif;
@@ -25,8 +20,6 @@ body {
     min-height: 100vh;
 }
 .wrapper { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
-
-/* --- Hlavička a navigace --- */
 #topbar { background: rgba(10, 10, 20, 0.5); backdrop-filter: blur(10px); border-bottom: 1px solid var(--glass-border); padding: 10px 0; position: sticky; top: 0; z-index: 100; }
 #topbar .wrapper { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
 #title h1 { font-size: 1.5em; font-weight: 600; color: var(--primary-text); text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
@@ -36,8 +29,6 @@ body {
 #menu a:hover, #menu li.active a { background-color: var(--accent-color); color: white; }
 #language-switcher button { background: transparent; border: 1px solid var(--secondary-text); color: var(--secondary-text); padding: 5px 10px; border-radius: 15px; margin-left: 5px; cursor: pointer; transition: all 0.3s ease; }
 #language-switcher button:hover, #language-switcher button.active { background: var(--accent-color); border-color: var(--accent-color); color: white; }
-
-/* --- "Smoke-Glass" obsahové bloky --- */
 #content-wrapper { padding-top: 40px; }
 .pagediv { background: var(--glass-bg); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 30px 40px; margin-bottom: 30px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); }
 h3, h4 { font-weight: 300; color: var(--primary-text); border-bottom: 1px solid var(--accent-color); padding-bottom: 15px; margin-bottom: 25px; }
@@ -46,8 +37,6 @@ h4 { font-size: 1.5em; }
 p, td, li { color: var(--secondary-text); font-weight: 300; }
 a { color: var(--accent-color); text-decoration: none; transition: color 0.3s; }
 a:hover { color: white; }
-
-/* --- Formulář a tabulky ve stylu "Glass" --- */
 .pricing-table td { border-color: var(--glass-border); padding: 15px 5px; }
 .pricing-table img { height: 20px; filter: invert(80%); vertical-align: middle; }
 .form-group input, .form-group select { width: 100%; padding: 12px; background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); border-radius: 8px; color: var(--primary-text); font-family: 'Montserrat', sans-serif; }
@@ -64,41 +53,32 @@ button:disabled { background-color: #555; cursor: not-allowed; }
 .photo-gallery .frame img:hover { transform: scale(1.05); box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
 #bottombar { text-align: center; padding: 40px 20px; color: var(--secondary-text); font-size: 0.9em; background: transparent; }
 @media (max-width: 768px) { #topbar .wrapper, #topbar-right-panel { flex-direction: column; gap: 15px; } .pagediv { padding: 20px; } h3 { font-size: 1.5em; } }
+.flatpickr-calendar { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 8px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); backdrop-filter: blur(10px); }
+.flatpickr-months .flatpickr-month, .flatpickr-weekday, .flatpickr-weekwrapper .flatpickr-weeks { background: transparent; color: var(--primary-text); }
+.flatpickr-day { color: var(--secondary-text); border-color: transparent; }
+.flatpickr-day:hover, .flatpickr-day:focus { background: rgba(136, 162, 255, 0.2); border-color: transparent; }
+.flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange { background: var(--accent-color); color: white; border-color: var(--accent-color); }
+.flatpickr-day.flatpickr-disabled, .flatpickr-day.flatpickr-disabled:hover { color: rgba(255, 255, 255, 0.2); background: transparent; cursor: not-allowed; }
+.flatpickr-months .flatpickr-prev-month, .flatpickr-months .flatpickr-next-month { fill: var(--accent-color); }
+.numInput, .numInputWrapper, .arrowUp, .arrowDown { border-color: var(--glass-border); color: var(--primary-text); }
 
-/* --- Styly pro nový kalendář (Flatpickr) --- */
-.flatpickr-calendar {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    border-radius: 8px;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    backdrop-filter: blur(10px);
+/* --- PŘIDANÉ STYLY PRO ODKAZ NA BOOKING.COM --- */
+.booking-link-layout {
+    display: flex;
+    align-items: center;
+    gap: 25px; /* Mezera mezi obrázkem a textem */
+    padding: 15px;
+    border-radius: 12px;
+    transition: background-color 0.3s;
 }
-.flatpickr-months .flatpickr-month, .flatpickr-weekday, .flatpickr-weekwrapper .flatpickr-weeks {
-    background: transparent;
-    color: var(--primary-text);
+.booking-link-layout:hover {
+    background-color: rgba(255, 255, 255, 0.1);
 }
-.flatpickr-day {
-    color: var(--secondary-text);
-    border-color: transparent;
+.booking-link-layout img {
+    flex-shrink: 0; /* Zabrání zmenšení obrázku */
 }
-.flatpickr-day:hover, .flatpickr-day:focus {
-    background: rgba(136, 162, 255, 0.2);
-    border-color: transparent;
-}
-.flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
-    background: var(--accent-color);
-    color: white;
-    border-color: var(--accent-color);
-}
-.flatpickr-day.flatpickr-disabled, .flatpickr-day.flatpickr-disabled:hover {
-    color: rgba(255, 255, 255, 0.2);
-    background: transparent;
-    cursor: not-allowed;
-}
-.flatpickr-months .flatpickr-prev-month, .flatpickr-months .flatpickr-next-month {
-    fill: var(--accent-color);
-}
-.numInput, .numInputWrapper, .arrowUp, .arrowDown {
-    border-color: var(--glass-border);
+.booking-link-layout p {
+    font-size: 1.1em;
+    font-weight: 400;
     color: var(--primary-text);
 }
