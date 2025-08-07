@@ -109,8 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const errorEl = document.getElementById('error-message');
         const submitBtn = form.querySelector('button[type="submit"]');
 
-        // --- ZMĚNA LOGIKY ZDE: Propojení obou kalendářů ---
-        let endDatePicker; // Deklarujeme proměnnou zde, aby byla přístupná níže
+        let endDatePicker;
 
         const startDatePicker = flatpickr(startDateEl, {
             minDate: minOrderDate,
@@ -118,18 +117,11 @@ document.addEventListener('DOMContentLoaded', () => {
             dateFormat: "Y-m-d",
             locale: currentLang,
             onClose: function(selectedDates) {
-                // Tato funkce se spustí po výběru data příjezdu
                 if (selectedDates[0]) {
                     const nextDay = new Date(selectedDates[0]);
                     nextDay.setDate(nextDay.getDate() + 1);
-
-                    // 1. Nastaví minimální datum pro odjezd (ochrana proti chybě)
                     endDatePicker.set('minDate', nextDay);
-
-                    // 2. Předvybere v kalendáři pro odjezd následující den
-                    endDatePicker.setDate(nextDay, true); // 'true' spustí 'onChange' pro přepočet ceny
-
-                    // 3. Automaticky otevře kalendář pro výběr data odjezdu
+                    endDatePicker.setDate(nextDay, true);
                     endDatePicker.open();
                 }
             }
@@ -141,7 +133,6 @@ document.addEventListener('DOMContentLoaded', () => {
             dateFormat: "Y-m-d",
             locale: currentLang
         });
-        // --- KONEC ZMĚN ---
 
         const isDateAvailable = (start, end) => {
             for (let d = new Date(start); d < new Date(end); d.setDate(d.getDate() + 1)) {
@@ -153,7 +144,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const updatePrice = async () => {
             const startDate = startDateEl.value;
             const endDate = endDateEl.value;
-            const currency = currencyEl.value;
             errorEl.textContent = ''; priceEl.textContent = ''; lastCalculatedPrice = null; submitBtn.disabled = true;
             if (!startDate || !endDate || new Date(endDate) <= new Date(startDate)) return;
             if (!isDateAvailable(startDate, endDate)) {
@@ -206,7 +196,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderPage = (pageId) => {
         if (!contentEl || !pageTemplates[pageId]) return;
         contentEl.innerHTML = pageTemplates[pageId];
-        if (pageId === 'page_index') { setupBookingForm(); }
+
+        // --- OPRAVA ZDE: Zjednodušená a spolehlivá logika pro zvýraznění aktivní položky ---
+        const pageClassName = pageId.replace('page_', '');
+        document.querySelectorAll('#menu li').forEach(li => {
+            li.classList.remove('active');
+        });
+        const activeLi = document.querySelector(`#menu li.${pageClassName}`);
+        if (activeLi) {
+            activeLi.classList.add('active');
+        }
+        // --- KONEC OPRAVY ---
+
+        if (pageId === 'page_index') {
+            setupBookingForm();
+        }
+
         populateContactInfo();
         localizeContent();
     };
@@ -238,8 +243,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentLang = lang;
                 document.querySelectorAll('#language-switcher button').forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
-                const currentPageClass = document.querySelector('#menu li.active').classList[0];
-                renderPage('page_' + currentPageClass);
+
+                // --- OPRAVA ZDE: Spolehlivé nalezení aktivní stránky pro přeložení ---
+                const activeLi = document.querySelector('#menu li.active');
+                if (activeLi) {
+                    const pageClass = Array.from(activeLi.classList).find(cls => cls !== 'active');
+                    if(pageClass) renderPage('page_' + pageClass);
+                }
             });
             langSwitcher.appendChild(button);
         });
