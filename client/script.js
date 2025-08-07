@@ -111,29 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let endDatePicker;
 
-        const startDatePicker = flatpickr(startDateEl, {
-            minDate: minOrderDate,
-            disable: unavailableDates,
-            dateFormat: "Y-m-d",
-            locale: currentLang,
-            onClose: function(selectedDates) {
-                if (selectedDates[0]) {
-                    const nextDay = new Date(selectedDates[0]);
-                    nextDay.setDate(nextDay.getDate() + 1);
-                    endDatePicker.set('minDate', nextDay);
-                    endDatePicker.setDate(nextDay, true);
-                    endDatePicker.open();
-                }
-            }
-        });
-
-        endDatePicker = flatpickr(endDateEl, {
-            minDate: minOrderDate,
-            disable: unavailableDates,
-            dateFormat: "Y-m-d",
-            locale: currentLang
-        });
-
         const isDateAvailable = (start, end) => {
             for (let d = new Date(start); d < new Date(end); d.setDate(d.getDate() + 1)) {
                 if (unavailableDates.includes(formatDateToYYYYMMDD(d))) return false;
@@ -144,6 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const updatePrice = async () => {
             const startDate = startDateEl.value;
             const endDate = endDateEl.value;
+            const currency = currencyEl.value;
             errorEl.textContent = ''; priceEl.textContent = ''; lastCalculatedPrice = null; submitBtn.disabled = true;
             if (!startDate || !endDate || new Date(endDate) <= new Date(startDate)) return;
             if (!isDateAvailable(startDate, endDate)) {
@@ -163,8 +141,38 @@ document.addEventListener('DOMContentLoaded', () => {
                     let msg = (data.error && data.error.includes(String(publicConfig.min_night_count))) ? translations[currentLang].error_min_stay.replace('{nights}', publicConfig.min_night_count) : (translations[currentLang][data.error] || translations[currentLang].server_error);
                     errorEl.textContent = msg;
                 }
-            } catch (err) { errorEl.textContent = translations[currentLang].server_error; }
+            } catch (err) {
+                errorEl.textContent = translations[currentLang].server_error;
+            }
         };
+
+        // --- ZMĚNA LOGIKY ZDE: Upraveno propojení kalendářů pro vyšší spolehlivost ---
+        const startDatePicker = flatpickr(startDateEl, {
+            minDate: minOrderDate,
+            disable: unavailableDates,
+            dateFormat: "Y-m-d",
+            locale: currentLang,
+            onClose: function(selectedDates) {
+                if (selectedDates[0]) {
+                    const nextDay = new Date(selectedDates[0]);
+                    nextDay.setDate(nextDay.getDate() + 1);
+                    endDatePicker.set('minDate', nextDay);
+                    endDatePicker.setDate(nextDay, false); // Nastaví datum, ale nespustí 'change' event
+                    endDatePicker.open();
+
+                    // Manuálně a spolehlivě spustíme přepočet ceny
+                    setTimeout(() => updatePrice(), 0);
+                }
+            }
+        });
+
+        endDatePicker = flatpickr(endDateEl, {
+            minDate: minOrderDate,
+            disable: unavailableDates,
+            dateFormat: "Y-m-d",
+            locale: currentLang
+        });
+        // --- KONEC ZMĚN ---
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault(); submitBtn.disabled = true; errorEl.textContent = '';
@@ -190,28 +198,14 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (err) { errorEl.textContent = translations[currentLang].server_error; }
         });
 
+        // Manuální změny (uživatel píše do pole nebo mění měnu) stále spouští přepočet
         [startDateEl, endDateEl, currencyEl].forEach(el => el.addEventListener('change', updatePrice));
     };
 
     const renderPage = (pageId) => {
         if (!contentEl || !pageTemplates[pageId]) return;
         contentEl.innerHTML = pageTemplates[pageId];
-
-        // --- OPRAVA ZDE: Zjednodušená a spolehlivá logika pro zvýraznění aktivní položky ---
-        const pageClassName = pageId.replace('page_', '');
-        document.querySelectorAll('#menu li').forEach(li => {
-            li.classList.remove('active');
-        });
-        const activeLi = document.querySelector(`#menu li.${pageClassName}`);
-        if (activeLi) {
-            activeLi.classList.add('active');
-        }
-        // --- KONEC OPRAVY ---
-
-        if (pageId === 'page_index') {
-            setupBookingForm();
-        }
-
+        if (pageId === 'page_index') { setupBookingForm(); }
         populateContactInfo();
         localizeContent();
     };
@@ -243,8 +237,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentLang = lang;
                 document.querySelectorAll('#language-switcher button').forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
-
-                // --- OPRAVA ZDE: Spolehlivé nalezení aktivní stránky pro přeložení ---
                 const activeLi = document.querySelector('#menu li.active');
                 if (activeLi) {
                     const pageClass = Array.from(activeLi.classList).find(cls => cls !== 'active');
