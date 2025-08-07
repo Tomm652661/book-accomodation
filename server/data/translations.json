@@ -42,8 +42,7 @@
     "account_czk_label": "Číslo účtu CZK:",
     "account_eur_label": "Číslo účtu EUR:",
     "btc_address_label": "BTC Adresa:",
-    "booking_confi
-    rmation_message": "Objednávka přijata. Potvrzení bude zasláno na e-mail.",
+    "booking_confirmation_message": "Objednávka přijata. Potvrzení bude zasláno na e-mail.",
     "server_error": "Chyba serveru. Zkuste to prosím později."
   },
   "en": {
