@@ -1,7 +1,7 @@
 {
   "pause_days_before": -1,
   "pause_days_after": 1,
-  "min_day_price": 1900,
+  "min_day_price": 1700,
   "min_night_count": 6,
   "special_day_prices": {
     "12-24": 5000,

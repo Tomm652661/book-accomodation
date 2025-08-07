@@ -24,20 +24,32 @@ async function calculatePrice(startDate, endDate, currency) {
     }
 
     const nights = (end - start) / (1000 * 3600 * 24);
-    if (nights < config.min_night_count) {
-        throw new Error(`Minimální délka pobytu je ${config.min_night_count} nocí.`);
+    if (nights <= 0) {
+        throw new Error('Pobyt musí trvat alespoň jednu noc.');
     }
 
     let totalPrice = 0;
-    const specialPrices = config.special_day_prices;
 
-    for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
-        const month = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
-        const key = `${month}-${day}`;
-        totalPrice += specialPrices[key] || config.min_day_price;
+    // --- ZMĚNA LOGIKY PRO VÝPOČET CENY ---
+    // Pokud je pobyt kratší nebo roven minimálnímu počtu nocí (např. 1-6 nocí)
+    if (nights <= config.min_night_count) {
+        // Cena je fixní paušál: minimální počet nocí * cena za den.
+        // Speciální ceny (např. Vánoce) se pro tento paušál neuplatňují.
+        totalPrice = config.min_night_count * config.min_day_price;
+    } else {
+        // Pokud je pobyt delší (7+ nocí), použije se původní logika s denní sazbou
+        // a zohledněním speciálních cen.
+        const specialPrices = config.special_day_prices;
+        for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            const key = `${month}-${day}`;
+            totalPrice += specialPrices[key] || config.min_day_price;
+        }
     }
+    // --- KONEC ZMĚNY LOGIKY ---
 
+    // Převod na měny zůstává beze změny
     switch (currency.toUpperCase()) {
         case 'EUR':
             return Math.round((totalPrice / config.czk_eur_rate) * 100) / 100;
@@ -45,7 +57,7 @@ async function calculatePrice(startDate, endDate, currency) {
             const priceInEur = totalPrice / config.czk_eur_rate;
             const btcRate = await getBtcEurRate();
             return (priceInEur / btcRate).toFixed(8);
-        default:
+        default: // CZK
             return totalPrice;
     }
 }
