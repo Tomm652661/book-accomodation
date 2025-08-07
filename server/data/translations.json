@@ -27,7 +27,7 @@
     "booking_heading": "Rezervace pobytu",
     "checkin_date": "Datum příjezdu:",
     "checkout_date": "Datum odjezdu:",
-    "email_label": "E-mail:",
+    "email_label": "Váš E-mail, na který Vám zašleme fakturační a platební údaje:",
     "currency_label": "Měna:",
     "price_display": "Cena za pobyt: ",
     "error_message": "Vybraný termín je bohužel obsazený.",
