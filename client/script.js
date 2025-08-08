@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Globální stav aplikace
     const API_BASE_URL = '/api';
     const contentEl = document.getElementById('content');
-
     let translations = {};
     let currentLang = 'cs';
     let unavailableDates = [];
@@ -34,10 +33,10 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <p data-lang-key="booking_reviews_text" class="review-text"></p>
                                 <div class="review-images">
                                     <a href="https://1url.cz/muFX9" target="_blank" rel="noopener" title="Hodnocení na Booking.com">
-                                        <img src="img/booking.png" alt="Booking.com" style="width: 125px; height: 100px; object-fit: contain;">
+                                        <img src="img/booking.png" alt="Booking.com">
                                     </a>
                                     <a href="https://1url.cz/dJRUj" target="_blank" rel="noopener" title="Hodnocení na Airbnb">
-                                        <img src="img/airbnb.png" alt="Airbnb" style="width: 100px; height: 100px; object-fit: contain;">
+                                        <img src="img/airbnb.png" alt="Airbnb">
                                     </a>
                                 </div>
                             </div>
@@ -123,7 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     const nextDay = new Date(selectedDates[0]);
                     nextDay.setDate(nextDay.getDate() + 1);
                     endDatePicker.set('minDate', nextDay);
-                    endDatePicker.setDate(nextDay, true);
                     endDatePicker.open();
                 }
             }
