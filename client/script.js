@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Globální stav aplikace
     const API_BASE_URL = '/api';
     const contentEl = document.getElementById('content');
+
     let translations = {};
     let currentLang = 'cs';
     let unavailableDates = [];
@@ -27,7 +28,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     <tr><td></td><td data-lang-key="price_eur_value"></td></tr>
                     <tr><td></td><td data-lang-key="price_btc_value"></td></tr>
                     <tr><td data-lang-key="address_label"></td><td data-lang-key="address_value"></td></tr>
-                    <tr><td colspan="2" style="padding-top: 20px;"><a href="https://1url.cz/muFX9" target="_blank" rel="noopener" class="booking-link-layout"><img src="img/booking.png" alt="Booking.com" style="width: 250px; height: 200px; object-fit: contain;"><p data-lang-key="booking_reviews_text"></p></a></td></tr>
+                    <tr>
+                        <td colspan="2" style="padding-top: 20px;">
+                            <div class="review-links-container">
+                                <p data-lang-key="booking_reviews_text" class="review-text"></p>
+                                <div class="review-images">
+                                    <a href="https://1url.cz/muFX9" target="_blank" rel="noopener" title="Hodnocení na Booking.com">
+                                        <img src="img/booking.png" alt="Booking.com" style="width: 125px; height: 100px; object-fit: contain;">
+                                    </a>
+                                    <a href="https://1url.cz/dJRUj" target="_blank" rel="noopener" title="Hodnocení na Airbnb">
+                                        <img src="img/airbnb.png" alt="Airbnb" style="width: 100px; height: 100px; object-fit: contain;">
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
                     <tr><td colspan="2">${contactHTML}</td></tr>
                 </table>
             </div>

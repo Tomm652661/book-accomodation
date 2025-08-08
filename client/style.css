@@ -38,7 +38,7 @@ p, td, li { color: var(--secondary-text); font-weight: 300; }
 a { color: var(--accent-color); text-decoration: none; transition: color 0.3s; }
 a:hover { color: white; }
 .pricing-table td { border-color: var(--glass-border); padding: 15px 5px; }
-.pricing-table img { height: 20px; filter: invert(80%); vertical-align: middle; }
+.pricing-table img { filter: invert(80%); vertical-align: middle; }
 .form-group input, .form-group select { width: 100%; padding: 12px; background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); border-radius: 8px; color: var(--primary-text); font-family: 'Montserrat', sans-serif; }
 .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--accent-color); }
 .form-group label { font-weight: 400; margin-bottom: 8px; display: block; }
@@ -62,23 +62,32 @@ button:disabled { background-color: #555; cursor: not-allowed; }
 .flatpickr-months .flatpickr-prev-month, .flatpickr-months .flatpickr-next-month { fill: var(--accent-color); }
 .numInput, .numInputWrapper, .arrowUp, .arrowDown { border-color: var(--glass-border); color: var(--primary-text); }
 
-/* --- PŘIDANÉ STYLY PRO ODKAZ NA BOOKING.COM --- */
-.booking-link-layout {
+/* --- ZMĚNA ZDE: Nové styly pro odkazy na hodnocení --- */
+.review-links-container {
     display: flex;
     align-items: center;
-    gap: 25px; /* Mezera mezi obrázkem a textem */
-    padding: 15px;
-    border-radius: 12px;
-    transition: background-color 0.3s;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
 }
-.booking-link-layout:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-.booking-link-layout img {
-    flex-shrink: 0; /* Zabrání zmenšení obrázku */
-}
-.booking-link-layout p {
+.review-text {
+    flex-grow: 1;
+    min-width: 200px;
     font-size: 1.1em;
     font-weight: 400;
     color: var(--primary-text);
+}
+.review-images {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Mezera mezi logy */
+    flex-shrink: 0;
+}
+.review-images a img {
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    opacity: 0.85;
+}
+.review-images a:hover img {
+    transform: scale(1.05);
+    opacity: 1;
 }
